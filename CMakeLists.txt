@@ -62,5 +62,7 @@ endforeach()
 find_package(wxWidgets REQUIRED COMPONENTS core stc)
 include(${wxWidgets_USE_FILE})
 
-add_executable(layout_editor ${editor_SRCS} ${editor_RESOURCES_C} resources/resources.rc)
-target_link_libraries(layout_editor ${wxWidgets_LIBRARIES} libls::bls)
+add_executable(editor ${editor_SRCS} ${editor_RESOURCES_C} resources/resources.rc)
+target_link_libraries(editor ${wxWidgets_LIBRARIES} bls)
+
+install(TARGETS editor)
