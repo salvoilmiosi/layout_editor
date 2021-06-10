@@ -62,7 +62,12 @@ endforeach()
 find_package(wxWidgets REQUIRED COMPONENTS core stc)
 include(${wxWidgets_USE_FILE})
 
-add_executable(editor ${editor_SRCS} ${editor_RESOURCES_C} resources/resources.rc)
+set(editor_ALL_SOURCES ${editor_SRCS} ${editor_RESOURCES_C} resources/resources.rc)
+if(CMAKE_BUILD_TYPE STREQUAL "Release" AND WIN32)
+    add_executable(editor WIN32 ${editor_ALL_SOURCES})
+else()
+    add_executable(editor ${editor_ALL_SOURCES})
+endif()
 target_link_libraries(editor ${wxWidgets_LIBRARIES} bls)
 
 install(TARGETS editor)
