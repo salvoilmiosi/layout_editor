@@ -152,7 +152,6 @@ box_dialog::box_dialog(frame_editor *parent, layout_box &out_box) :
         }(std::make_index_sequence<EnumSize<enum_type>>{});
     };
 
-    add_radio_btns("Tipo:", m_box.type);
     add_radio_btns(L"Modalità:", m_box.mode);
     add_check_boxes("Flag:", m_box.flags);
 
@@ -260,8 +259,7 @@ static bool operator == (const layout_box &a, const layout_box &b) {
         && a.script == b.script
         && a.spacers == b.spacers
         && a.goto_label == b.goto_label
-        && a.mode == b.mode
-        && a.type == b.type;
+        && a.mode == b.mode;
 }
 
 void box_dialog::OnClose(wxCloseEvent &evt) {
