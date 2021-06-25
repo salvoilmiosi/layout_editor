@@ -23,7 +23,7 @@ bool MainApp::OnInit() {
         return false;
     }
 
-    intl::set_language(wxLANGUAGE_DEFAULT);
+    intl::set_language("");
 
     wxImage::AddHandler(new wxPNGHandler);
 
