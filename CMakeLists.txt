@@ -60,7 +60,7 @@ foreach(file ${editor_RESOURCES})
     embed_resource("${CMAKE_CURRENT_SOURCE_DIR}/${file}" "${resource_file_c}" "__resource__${basename}")
 endforeach()
 
-find_package(wxWidgets REQUIRED COMPONENTS core stc)
+find_package(wxWidgets REQUIRED COMPONENTS base core stc)
 include(${wxWidgets_USE_FILE})
 
 set(editor_ALL_SOURCES ${editor_SRCS} ${editor_RESOURCES_C} resources/resources.rc)
