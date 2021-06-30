@@ -90,10 +90,10 @@ F(RIGHT)
 enum { RESIZE_NODES };
 #undef F
 #define F(x) RESIZE_##x = 1 << POS_RESIZE_##x,
-enum resize_nodes : flags_t { RESIZE_NODES };
+enum resize_nodes : uint8_t { RESIZE_NODES };
 #undef F
 
-std::pair<layout_box_list::iterator, flags_t> box_editor_panel::getBoxResizeNode(float x, float y) {
+std::pair<layout_box_list::iterator, uint8_t> box_editor_panel::getBoxResizeNode(float x, float y) {
     constexpr float RESIZE_TOLERANCE = 8.f;
 
     float nw = RESIZE_TOLERANCE / scaled_width();

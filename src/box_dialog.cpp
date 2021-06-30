@@ -47,11 +47,11 @@ public:
 template<flags_enum T>
 class FlagValidator : public wxValidator {
 protected:
-    flags_t m_flag;
+    T m_flag;
     bitset<T> *m_value;
 
 public:
-    FlagValidator(T n, bitset<T> &m) : m_flag(flags_t(n)), m_value(&m) {}
+    FlagValidator(T n, bitset<T> &m) : m_flag(n), m_value(&m) {}
 
     virtual wxObject *Clone() const override {
         return new FlagValidator(*this);
@@ -60,7 +60,10 @@ public:
     virtual bool TransferFromWindow() override {
         if (m_value) {
             wxCheckBox *check_box = dynamic_cast<wxCheckBox*>(GetWindow());
-            *m_value = (*m_value & ~m_flag) | (m_flag & -check_box->GetValue());
+            m_value->unset(m_flag);
+            if (check_box->GetValue()) {
+                m_value->set(m_flag);
+            }
         }
         return true;
     }
@@ -68,7 +71,7 @@ public:
     virtual bool TransferToWindow() override {
         if (m_value) {
             wxCheckBox *check_box = dynamic_cast<wxCheckBox*>(GetWindow());
-            check_box->SetValue(*m_value & m_flag);
+            check_box->SetValue(m_value->check(m_flag));
         }
         return true;
     }

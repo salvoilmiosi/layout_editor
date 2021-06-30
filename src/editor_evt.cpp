@@ -137,7 +137,7 @@ void frame_editor::OnAutoLayout(wxCommandEvent &evt) {
     try {
         reader my_reader(m_doc);
         my_reader.add_layout(getControlScript().ToStdString());
-        my_reader.add_flags(reader_flags::HALT_ON_SETLAYOUT);
+        my_reader.add_flag(reader_flags::HALT_ON_SETLAYOUT);
         my_reader.start();
 
         auto &layouts = my_reader.get_layouts();

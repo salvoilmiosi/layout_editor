@@ -37,7 +37,7 @@ private:
     }
 
     layout_box_list::iterator getBoxAt(float x, float y);
-    std::pair<layout_box_list::iterator, flags_t> getBoxResizeNode(float x, float y);
+    std::pair<layout_box_list::iterator, uint8_t> getBoxResizeNode(float x, float y);
 
 private:
     class frame_editor *app;
