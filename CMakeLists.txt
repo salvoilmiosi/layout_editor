@@ -69,6 +69,6 @@ if(CMAKE_BUILD_TYPE STREQUAL "Release" AND WIN32)
 else()
     add_executable(blseditor ${editor_ALL_SOURCES})
 endif()
-target_link_libraries(blseditor ${wxWidgets_LIBRARIES} bls)
+target_link_libraries(blseditor ${wxWidgets_LIBRARIES} bls::bls)
 
 install(TARGETS blseditor)
