@@ -2,7 +2,7 @@
 
 #include <wx/cmdline.h>
 
-#include "intl.h"
+#include "set_language.h"
 
 class MainApp : public wxApp {
 public:
@@ -23,7 +23,9 @@ bool MainApp::OnInit() {
         return false;
     }
 
-    intl::set_language("");
+    if (!bls::set_language("")) {
+        return false;
+    }
 
     wxImage::AddHandler(new wxPNGHandler);
 
