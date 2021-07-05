@@ -10,6 +10,8 @@
 #include "reader.h"
 #include "text_dialog.h"
 
+using namespace bls;
+
 class output_dialog;
 
 class reader_thread : public wxThread {

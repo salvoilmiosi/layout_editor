@@ -6,6 +6,8 @@
 #include "text_dialog.h"
 #include "layout.h"
 
+using namespace bls;
+
 class box_dialog : public wxDialog {
 public:
     static box_dialog *openDialog(class frame_editor *app, layout_box &box);

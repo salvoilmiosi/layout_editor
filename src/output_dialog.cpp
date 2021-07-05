@@ -108,7 +108,7 @@ wxThread::ExitCode reader_thread::Entry() {
 
         if (!m_reader.get_notes().empty()) {
             auto *evt = new wxThreadEvent(wxEVT_COMMAND_LAYOUT_ERROR);
-            std::string notes = string_join(m_reader.get_notes(), "\n\n");
+            std::string notes = util::string_join(m_reader.get_notes(), "\n\n");
             evt->SetString(wxString::FromUTF8(notes.c_str()));
             evt->SetInt(0);
             wxQueueEvent(parent, evt);

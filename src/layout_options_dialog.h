@@ -7,6 +7,8 @@
 
 #include "layout.h"
 
+using namespace bls;
+
 class LayoutOptionsDialog : public wxDialog {
 public:
     LayoutOptionsDialog(wxWindow *parent, layout_box_list *m_layout);

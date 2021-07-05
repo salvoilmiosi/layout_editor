@@ -5,6 +5,8 @@
 #include "editor.h"
 #include "text_dialog.h"
 
+using namespace bls;
+
 class box_editor_panel : public wxImagePanel {
 public:
     box_editor_panel(wxWindow *parent, class frame_editor *app);

@@ -15,6 +15,8 @@
 
 #include <deque>
 
+using namespace bls;
+
 constexpr size_t MAX_RECENT_FILES_HISTORY = 10;
 constexpr size_t MAX_RECENT_PDFS_HISTORY = 10;
 
