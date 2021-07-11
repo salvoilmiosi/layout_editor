@@ -44,14 +44,14 @@ public:
     }
 };
 
-template<flags_enum T>
+template<enums::flags_enum T>
 class FlagValidator : public wxValidator {
 protected:
     T m_flag;
-    bitset<T> *m_value;
+    enums::bitset<T> *m_value;
 
 public:
-    FlagValidator(T n, bitset<T> &m) : m_flag(n), m_value(&m) {}
+    FlagValidator(T n, enums::bitset<T> &m) : m_flag(n), m_value(&m) {}
 
     virtual wxObject *Clone() const override {
         return new FlagValidator(*this);
@@ -110,6 +110,15 @@ enum {
     BUTTON_TEST = 1001
 };
 
+template<typename T>
+static inline const char *get_label(const T &data) {
+    if constexpr (std::is_same_v<T, const char *>) {
+        return data;
+    } else {
+        return std::get<const char *>(data);
+    }
+}
+
 box_dialog::box_dialog(frame_editor *parent, layout_box &out_box) :
     wxDialog(parent, wxID_ANY, "Modifica Rettangolo", wxDefaultPosition, wxSize(700, 500), wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER), m_box(out_box), app(parent)
 {
@@ -134,7 +143,7 @@ box_dialog::box_dialog(frame_editor *parent, layout_box &out_box) :
         using enum_type = std::decay_t<decltype(value)>;
         bool first = true;
         auto create_btn = [&](size_t i) {
-            auto ret = new wxRadioButton(this, wxID_ANY, EnumData<const char *>(static_cast<enum_type>(i)),
+            auto ret = new wxRadioButton(this, wxID_ANY, get_label(enums::get_data(static_cast<enum_type>(i))),
                 wxDefaultPosition, wxDefaultSize, first ? wxRB_GROUP : 0,
                 RadioGroupValidator(i, value));
             first = false;
@@ -142,17 +151,17 @@ box_dialog::box_dialog(frame_editor *parent, layout_box &out_box) :
         };
         [&] <size_t ... Is> (std::index_sequence<Is...>) {
             addLabelAndCtrl(label, 0, 0, create_btn(Is) ...);
-        }(std::make_index_sequence<EnumSize<enum_type>>{});
+        }(std::make_index_sequence<enums::size<enum_type>()>{});
     };
 
-    auto add_check_boxes = [&] <flags_enum enum_type>(const wxString &label, bitset<enum_type> &value) {
+    auto add_check_boxes = [&] <enums::flags_enum enum_type>(const wxString &label, enums::bitset<enum_type> &value) {
         auto create_btn = [&](size_t i) {
             const auto flag = static_cast<enum_type>(1 << i);
-            return new wxCheckBox(this, wxID_ANY, EnumData<const char *>(flag), wxDefaultPosition, wxDefaultSize, 0, FlagValidator(flag, value));  
+            return new wxCheckBox(this, wxID_ANY, get_label(enums::get_data(flag)), wxDefaultPosition, wxDefaultSize, 0, FlagValidator(flag, value));  
         };
         [&] <size_t ... Is> (std::index_sequence<Is...>) {
             addLabelAndCtrl(label, 0, 0, create_btn(Is) ...);
-        }(std::make_index_sequence<EnumSize<enum_type>>{});
+        }(std::make_index_sequence<enums::size<enum_type>()>{});
     };
 
     add_radio_btns(L"Modalità:", m_box.mode);

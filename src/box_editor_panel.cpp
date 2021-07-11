@@ -206,9 +206,9 @@ void box_editor_panel::OnMouseUp(wxMouseEvent &evt) {
             }
             case TOOL_TEST: {
                 static auto choices = []<size_t ... Is> (std::index_sequence<Is...>) {
-                    auto initlist = {wxString(EnumData<const char *>(static_cast<read_mode>(Is))) ... };
+                    auto initlist = {wxString(std::get<const char *>(enums::get_data(static_cast<read_mode>(Is)))) ... };
                     return wxArrayString(initlist.begin(), initlist.end());
-                } (std::make_index_sequence<EnumSize<read_mode>>{});
+                } (std::make_index_sequence<enums::size<read_mode>()>{});
                 wxSingleChoiceDialog diag(this, L"Modalità di lettura:", "Test Lettura Rettangolo", choices);
                 if (diag.ShowModal() == wxID_OK) {
                     pdf_rect box;
