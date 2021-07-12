@@ -7,6 +7,18 @@
 
 using namespace bls;
 
+DEFINE_ENUM_FLAGS(direction,
+    (TOP)
+    (LEFT)
+    (BOTTOM)
+    (RIGHT)
+)
+
+struct resize_node {
+    layout_box_list::iterator box;
+    enums::bitset<direction> directions;
+};
+
 class box_editor_panel : public wxImagePanel {
 public:
     box_editor_panel(wxWindow *parent, class frame_editor *app);
@@ -39,7 +51,7 @@ private:
     }
 
     layout_box_list::iterator getBoxAt(float x, float y);
-    std::pair<layout_box_list::iterator, uint8_t> getBoxResizeNode(float x, float y);
+    resize_node getBoxResizeNode(float x, float y);
 
 private:
     class frame_editor *app;
@@ -48,7 +60,7 @@ private:
 
     wxRealPoint start_pt, end_pt, dragging_offset;
     layout_box *selected_box = nullptr;
-    char resize_node = 0;
+    enums::bitset<direction> node_directions;
     bool mouseIsDown = false;
 
     int selected_tool = TOOL_SELECT;

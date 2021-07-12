@@ -80,56 +80,42 @@ layout_box_list::iterator box_editor_panel::getBoxAt(float x, float y) {
     return std::ranges::find_if(app->layout, check_box);
 };
 
-#define RESIZE_NODES \
-F(TOP) \
-F(LEFT) \
-F(BOTTOM) \
-F(RIGHT)
-
-#define F(x) POS_RESIZE_##x,
-enum { RESIZE_NODES };
-#undef F
-#define F(x) RESIZE_##x = 1 << POS_RESIZE_##x,
-enum resize_nodes : uint8_t { RESIZE_NODES };
-#undef F
-
-std::pair<layout_box_list::iterator, uint8_t> box_editor_panel::getBoxResizeNode(float x, float y) {
+resize_node box_editor_panel::getBoxResizeNode(float x, float y) {
     constexpr float RESIZE_TOLERANCE = 8.f;
 
     float nw = RESIZE_TOLERANCE / scaled_width();
     float nh = RESIZE_TOLERANCE / scaled_height();
 
     auto check_box = [&](const layout_box &box) {
+        enums::bitset<direction> node;
         if (box.page == app->getSelectedPage()) {
-            int node = 0;
             if (y > box.y - nh && y < box.y + box.h + nh) {
                 if (x > box.x - nw && x < box.x + nw) {
-                    node |= RESIZE_LEFT;
+                    node.set(direction::LEFT);
                 } else if (x > box.x + box.w - nw && x < box.x + box.w + nw) {
-                    node |= RESIZE_RIGHT;
+                    node.set(direction::RIGHT);
                 }
             }
             if (x > box.x - nw && x < box.x + box.w + nw) {
                 if (y > box.y - nh && y < box.y + nh) {
-                    node |= RESIZE_TOP;
+                    node.set(direction::TOP);
                 } else if (y > box.y + box.h - nh && y < box.y + box.h + nh) {
-                    node |= RESIZE_BOTTOM;
+                    node.set(direction::BOTTOM);
                 }
             }
-            return node;
         }
-        return 0;
+        return node;
     };
     if (selected_box) {
         auto node = check_box(*selected_box);
-        if (node) return std::make_pair(app->layout.get_box_iterator(selected_box), node);
+        if (!node.empty()) return resize_node{app->layout.get_box_iterator(selected_box), node};
     }
     auto it = app->layout.begin();
     for (; it != app->layout.end(); ++it) {
-        int node = check_box(*it);
-        if (node) return std::make_pair(it, node);
+        auto node = check_box(*it);
+        if (!node.empty()) return resize_node{it, node};
     }
-    return std::make_pair(it, 0);
+    return resize_node{it, 0};
 };
 
 void box_editor_panel::OnMouseDown(wxMouseEvent &evt) {
@@ -163,12 +149,12 @@ void box_editor_panel::OnMouseDown(wxMouseEvent &evt) {
         }
         case TOOL_RESIZE: {
             auto node = getBoxResizeNode(start_pt.x, start_pt.y);
-            if (node.second) {
-                app->selectBox(&*node.first);
-                resize_node = node.second;
-                mouseIsDown = true;
-            } else {
+            if (node.directions.empty()) {
                 app->selectBox(nullptr);
+            } else {
+                app->selectBox(&*node.box);
+                node_directions = node.directions;
+                mouseIsDown = true;
             }
             break;
         }
@@ -272,16 +258,16 @@ void box_editor_panel::OnMouseMove(wxMouseEvent &evt) {
             selected_box->y = dragging_offset.y + end_pt.y;
             break;
         case TOOL_RESIZE: {
-            if (resize_node & RESIZE_TOP) {
+            if (node_directions.check(direction::TOP)) {
                 selected_box->h = selected_box->y + selected_box->h - end_pt.y;
                 selected_box->y = end_pt.y;
-            } else if (resize_node & RESIZE_BOTTOM) {
+            } else if (node_directions.check(direction::BOTTOM)) {
                 selected_box->h = end_pt.y - selected_box->y;
             }
-            if (resize_node & RESIZE_LEFT) {
+            if (node_directions.check(direction::LEFT)) {
                 selected_box->w = selected_box->x + selected_box->w - end_pt.x;
                 selected_box->x = end_pt.x;
-            } else if (resize_node & RESIZE_RIGHT) {
+            } else if (node_directions.check(direction::RIGHT)) {
                 selected_box->w = end_pt.x - selected_box->x;
             }
             break;
@@ -294,24 +280,25 @@ void box_editor_panel::OnMouseMove(wxMouseEvent &evt) {
             OnMouseUp(evt);
         }
     } else {
+        using namespace magic_enum::bitwise_operators;
         switch (selected_tool) {
         case TOOL_RESIZE:
             auto node = getBoxResizeNode(end_pt.x, end_pt.y);
-            switch (node.second) {
-            case RESIZE_LEFT:
-            case RESIZE_RIGHT:
+            switch (static_cast<direction>(node.directions.data())) {
+            case direction::LEFT:
+            case direction::RIGHT:
                 SetCursor(wxStockCursor::wxCURSOR_SIZEWE);
                 break;
-            case RESIZE_TOP:
-            case RESIZE_BOTTOM:
+            case direction::TOP:
+            case direction::BOTTOM:
                 SetCursor(wxStockCursor::wxCURSOR_SIZENS);
                 break;
-            case RESIZE_LEFT | RESIZE_TOP:
-            case RESIZE_RIGHT | RESIZE_BOTTOM:
+            case direction::LEFT | direction::TOP:
+            case direction::RIGHT | direction::BOTTOM:
                 SetCursor(wxStockCursor::wxCURSOR_SIZENWSE);
                 break;
-            case RESIZE_RIGHT | RESIZE_TOP:
-            case RESIZE_LEFT | RESIZE_BOTTOM:
+            case direction::RIGHT | direction::TOP:
+            case direction::LEFT | direction::BOTTOM:
                 SetCursor(wxStockCursor::wxCURSOR_SIZENESW);
                 break;
             default:
