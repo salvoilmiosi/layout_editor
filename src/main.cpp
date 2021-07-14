@@ -2,8 +2,6 @@
 
 #include <wx/cmdline.h>
 
-#include "set_language.h"
-
 class MainApp : public wxApp {
 public:
     virtual bool OnInit() override;
@@ -22,11 +20,7 @@ bool MainApp::OnInit() {
     if (!wxApp::OnInit()) {
         return false;
     }
-
-    if (!bls::set_language("")) {
-        return false;
-    }
-
+    
     wxImage::AddHandler(new wxPNGHandler);
 
     editor = new frame_editor();
