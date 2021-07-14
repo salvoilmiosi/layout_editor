@@ -88,9 +88,8 @@ void output_dialog::OnClickAbort(wxCommandEvent &) {
     }
 }
 
-reader_thread::reader_thread(output_dialog *parent, reader &m_reader, const layout_box_list &layout) : parent(parent), m_reader(m_reader) {
-    std::ranges::copy(layout, std::back_inserter(m_layout));
-}
+reader_thread::reader_thread(output_dialog *parent, reader &m_reader, const layout_box_list &layout)
+    : parent(parent), m_reader(m_reader), m_layout(layout) {}
 
 reader_thread::~reader_thread() {
     parent->m_thread = nullptr;
