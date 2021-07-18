@@ -34,8 +34,7 @@ BEGIN_EVENT_TABLE(frame_editor, wxFrame)
     EVT_BUTTON(CTL_AUTO_LAYOUT, frame_editor::OnAutoLayout)
     EVT_BUTTON (CTL_ROTATE, frame_editor::OnRotate)
     EVT_BUTTON (CTL_LOAD_PDF, frame_editor::OnLoadPdf)
-    EVT_SPINCTRL (CTL_PAGE, frame_editor::OnPageSelect)
-    EVT_TEXT_ENTER (CTL_PAGE, frame_editor::OnPageEnter)
+    EVT_COMMAND(CTL_PAGE, EVT_PAGE_SELECTED, frame_editor::OnPageSelect)
     EVT_COMMAND_SCROLL_THUMBTRACK (CTL_SCALE, frame_editor::OnScaleChange)
     EVT_COMMAND_SCROLL_CHANGED (CTL_SCALE, frame_editor::OnScaleChangeFinal)
     EVT_TOOL (TOOL_SELECT, frame_editor::OnChangeTool)
@@ -139,13 +138,13 @@ frame_editor::frame_editor() : wxFrame(nullptr, wxID_ANY, "Layout Bolletta", wxD
     wxButton *btn_load_pdf = new wxButton(toolbar_top, CTL_LOAD_PDF, "Carica PDF", wxDefaultPosition, wxSize(100, -1));
     toolbar_top->AddControl(btn_load_pdf, "Carica un file PDF");
 
-    wxButton *btn_auto_layout = new wxButton(toolbar_top, CTL_AUTO_LAYOUT, "Auto carica layout", wxDefaultPosition, wxSize(150, -1));
+    wxButton *btn_auto_layout = new wxButton(toolbar_top, CTL_AUTO_LAYOUT, "Auto Layout", wxDefaultPosition, wxSize(100, -1));
     toolbar_top->AddControl(btn_auto_layout, "Determina il layout di questo file automaticamente");
 
-    m_page = new wxSpinCtrl(toolbar_top, CTL_PAGE, "Pagina", wxDefaultPosition, wxSize(150, -1), wxTE_PROCESS_ENTER | wxSP_ARROW_KEYS, 0, 0);
+    m_page = new PageCtrl(toolbar_top, CTL_PAGE);
     toolbar_top->AddControl(m_page, "Pagina");
 
-    m_scale = new wxSlider(toolbar_top, CTL_SCALE, 50, 1, 100, wxDefaultPosition, wxSize(200, -1));
+    m_scale = new wxSlider(toolbar_top, CTL_SCALE, 50, 1, 100, wxDefaultPosition, wxSize(120, -1));
     toolbar_top->AddControl(m_scale, "Scala");
 
     toolbar_top->Realize();
@@ -282,7 +281,7 @@ void frame_editor::updateLayout(bool addToHistory) {
 void frame_editor::loadPdf(const wxString &filename) {
     try {
         m_doc.open(filename.ToStdString());
-        m_page->SetRange(1, m_doc.num_pages());
+        m_page->SetMaxPages(m_doc.num_pages());
         setSelectedPage(1, true);
 
         m_pdf_history->AddFileToHistory(m_doc.filename().string());
@@ -319,7 +318,7 @@ void frame_editor::setSelectedPage(int page, bool force) {
     
     selected_page = page;
 
-    m_page->SetValue(wxString::Format("%i/%i", page, m_page->GetMax()));
+    m_page->SetValue(page);
     m_image->setImage(pdf_to_image(m_doc, page, rotation));
 }
 

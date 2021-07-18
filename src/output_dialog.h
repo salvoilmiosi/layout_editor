@@ -39,7 +39,7 @@ private:
 
     wxCheckBox *m_show_globals;
     wxCheckBox *m_show_debug;
-    wxSpinCtrl *m_page;
+    PageCtrl *m_page;
     wxListCtrl *m_list_ctrl;
 
     reader_thread *m_thread = nullptr;
@@ -47,7 +47,6 @@ private:
     
     TextDialog *error_dialog;
 
-    void OnUpdateSpin(wxSpinEvent &evt);
     void OnUpdate(wxCommandEvent &evt);
 
     void OnClickUpdate(wxCommandEvent &evt);

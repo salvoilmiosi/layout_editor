@@ -14,6 +14,7 @@ src/image_panel.cpp
 src/layout_options_dialog.cpp
 src/main.cpp
 src/output_dialog.cpp
+src/page_ctl.cpp
 src/pdf_to_image.cpp
 )
 

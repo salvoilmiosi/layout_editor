@@ -7,9 +7,10 @@
     #include <wx/wx.h>
 #endif
 
-#include <wx/spinctrl.h>
 #include <wx/config.h>
 #include <wx/filehistory.h>
+
+#include "page_ctl.h"
 
 #include "layout.h"
 
@@ -87,8 +88,7 @@ private:
     void OnAutoLayout   (wxCommandEvent &evt);
     void OnRotate       (wxCommandEvent &evt);
     void OnLoadPdf      (wxCommandEvent &evt);
-    void OnPageSelect   (wxSpinEvent &evt);
-    void OnPageEnter    (wxCommandEvent &evt);
+    void OnPageSelect   (wxCommandEvent &evt);
     void OnScaleChange  (wxScrollEvent &evt);
     void OnScaleChangeFinal (wxScrollEvent &evt);
     void OnChangeTool   (wxCommandEvent &evt);
@@ -113,7 +113,7 @@ private:
     wxFileHistory *m_pdf_history;
     wxMenu *m_pdf_history_menu;
 
-    wxSpinCtrl *m_page;
+    PageCtrl *m_page;
     wxSlider *m_scale;
 
     wxListBox *m_list_boxes;

@@ -169,14 +169,10 @@ void frame_editor::OnLoadPdf(wxCommandEvent &evt) {
     updateLayout(false);
 }
 
-void frame_editor::OnPageSelect(wxSpinEvent &evt) {
-    OnPageEnter(evt);
-}
-
-void frame_editor::OnPageEnter(wxCommandEvent &evt) {
+void frame_editor::OnPageSelect(wxCommandEvent &evt) {
     if (!m_doc.isopen()) return;
 
-    setSelectedPage(m_page->GetValue());
+    setSelectedPage(evt.GetInt());
 }
 
 void frame_editor::OnChangeTool(wxCommandEvent &evt) {

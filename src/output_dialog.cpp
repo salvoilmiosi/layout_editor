@@ -25,8 +25,7 @@ BEGIN_EVENT_TABLE(output_dialog, wxDialog)
     EVT_MENU(TOOL_ABORT, output_dialog::OnClickAbort)
     EVT_CHECKBOX(CTL_DEBUG, output_dialog::OnUpdate)
     EVT_CHECKBOX(CTL_GLOBALS, output_dialog::OnUpdate)
-    EVT_SPINCTRL (CTL_OUTPUT_PAGE, output_dialog::OnUpdateSpin)
-    EVT_TEXT_ENTER (CTL_OUTPUT_PAGE, output_dialog::OnUpdate)
+    EVT_COMMAND(CTL_OUTPUT_PAGE, EVT_PAGE_SELECTED, output_dialog::OnUpdate)
     EVT_COMMAND(wxID_ANY, wxEVT_COMMAND_READ_COMPLETE, output_dialog::OnReadCompleted)
     EVT_COMMAND(wxID_ANY, wxEVT_COMMAND_LAYOUT_ERROR, output_dialog::OnLayoutError)
 END_EVENT_TABLE()
@@ -57,7 +56,7 @@ output_dialog::output_dialog(frame_editor *parent) :
     m_show_globals = new wxCheckBox(toolbar, CTL_GLOBALS, "Globali");
     toolbar->AddControl(m_show_globals, "Globali");
 
-    m_page = new wxSpinCtrl(toolbar, CTL_OUTPUT_PAGE, wxEmptyString, wxDefaultPosition, wxSize(150, -1), wxSP_ARROW_KEYS | wxTE_PROCESS_ENTER, 0, 0);
+    m_page = new PageCtrl(toolbar, CTL_OUTPUT_PAGE);
 
     toolbar->AddControl(m_page, "Pagina");
 
@@ -141,8 +140,7 @@ void output_dialog::compileAndRead() {
             m_thread = nullptr;
         }
 
-        m_page->SetRange(0, 0);
-        m_page->SetValue("");
+        m_page->SetMaxPages(1);
         m_list_ctrl->ClearAll();
     }
 }
@@ -160,13 +158,7 @@ void output_dialog::OnLayoutError(wxCommandEvent &evt) {
 }
 
 void output_dialog::OnReadCompleted(wxCommandEvent &evt) {
-    m_page->SetRange(1, m_reader.get_table_count());
-    m_page->SetValue(1);
-    updateItems();
-}
-
-void output_dialog::OnUpdateSpin(wxSpinEvent &evt) {
-    if (m_thread) return;
+    m_page->SetMaxPages(m_reader.get_table_count());
     updateItems();
 }
 
@@ -207,6 +199,5 @@ void output_dialog::updateItems() {
         display_page(variable_key::global_index);
     } else {
         display_page(m_page->GetValue() - 1);
-        m_page->SetValue(wxString::Format("%i/%i", m_page->GetValue(), m_page->GetMax()));
     }
 }
