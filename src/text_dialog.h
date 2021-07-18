@@ -16,9 +16,9 @@ public:
 
         m_text_ctl = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_DONTWRAP | wxTE_READONLY);
         m_text_ctl->SetFont(wxFont(10, wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
-        sizer->Add(m_text_ctl, 1, wxEXPAND | wxALL, 5);
+        sizer->Add(m_text_ctl, wxSizerFlags(1).Expand().Border(wxALL, 5));
 
-        sizer->Add(new wxButton(this, wxID_OK, "OK"), 0, wxALIGN_CENTER | wxALL, 5);
+        sizer->Add(new wxButton(this, wxID_OK, "OK"), wxSizerFlags().Center().Border(wxALL, 5));
         SetSizer(sizer);
     }
 

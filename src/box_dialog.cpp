@@ -130,11 +130,11 @@ box_dialog::box_dialog(frame_editor *parent, layout_box &out_box) :
         wxBoxSizer *hsizer = new wxBoxSizer(wxHORIZONTAL);
 
         wxStaticText *label = new wxStaticText(this, wxID_ANY, labelText, wxDefaultPosition, wxSize(60, -1), wxALIGN_RIGHT);
-        hsizer->Add(label, 0, wxALIGN_CENTER_VERTICAL | wxALL, 5);
+        hsizer->Add(label, wxSizerFlags().Center().Border(wxALL, 5));
 
-        (hsizer->Add(ctrls, hprop, wxEXPAND | wxLEFT, 5), ...);
+        (hsizer->Add(ctrls, wxSizerFlags(hprop).Expand().Border(wxLEFT, 5)), ...);
 
-        sizer->Add(hsizer, vprop, wxEXPAND | wxALL, 5);
+        sizer->Add(hsizer, wxSizerFlags(vprop).Expand().Border(wxALL, 5));
     };
     
     addLabelAndCtrl("Nome:", 0, 1, new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, StringValidator(&m_box.name)));
@@ -180,19 +180,19 @@ box_dialog::box_dialog(frame_editor *parent, layout_box &out_box) :
     addLabelAndCtrl("Spaziatori:", 1, 1, make_script_box(m_box.spacers));
     addLabelAndCtrl("Script:", 3, 1, make_script_box(m_box.script));
 
-    top_level->Add(sizer, 1, wxEXPAND | wxALL, 5);
+    top_level->Add(sizer, wxSizerFlags(1).Expand().Border(wxALL, 5));
 
     wxStaticLine *line = new wxStaticLine(this, wxID_STATIC, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL);
-    top_level->Add(line, 0, wxGROW | wxALL, 5);
+    top_level->Add(line, wxSizerFlags().Expand().Border(wxALL, 5));
 
     wxBoxSizer *okCancelSizer = new wxBoxSizer(wxHORIZONTAL);
 
-    okCancelSizer->Add(new wxButton(this, wxID_OK, "OK"), 0, wxALIGN_CENTER_VERTICAL | wxALL, 5);
-    okCancelSizer->Add(new wxButton(this, wxID_CANCEL, "Annulla"), 0, wxALIGN_CENTER_VERTICAL | wxALL, 5);
-    okCancelSizer->Add(new wxButton(this, wxID_APPLY, "Applica"), 0, wxALIGN_CENTER_VERTICAL | wxALL, 5);
-    okCancelSizer->Add(new wxButton(this, BUTTON_TEST, "Test"), 0, wxALIGN_CENTER_VERTICAL | wxALL, 5);
+    okCancelSizer->Add(new wxButton(this, wxID_OK, "OK"), wxSizerFlags().Center().Border(wxALL, 5));
+    okCancelSizer->Add(new wxButton(this, wxID_CANCEL, "Annulla"), wxSizerFlags().Center().Border(wxALL, 5));
+    okCancelSizer->Add(new wxButton(this, wxID_APPLY, "Applica"), wxSizerFlags().Center().Border(wxALL, 5));
+    okCancelSizer->Add(new wxButton(this, BUTTON_TEST, "Test"), wxSizerFlags().Center().Border(wxALL, 5));
 
-    top_level->Add(okCancelSizer, 0, wxALIGN_CENTER_HORIZONTAL | wxALL, 5);
+    top_level->Add(okCancelSizer, wxSizerFlags().Center().Border(wxALL, 5));
 
     SetSizer(top_level);
     Show();

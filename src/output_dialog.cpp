@@ -61,14 +61,14 @@ output_dialog::output_dialog(frame_editor *parent) :
     toolbar->AddControl(m_page, "Pagina");
 
     toolbar->Realize();
-    sizer->Add(toolbar, 0, wxEXPAND);
+    sizer->Add(toolbar, wxSizerFlags().Expand());
 
     m_list_ctrl = new wxListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(320, 450), wxLC_REPORT);
 
-    sizer->Add(m_list_ctrl, 1, wxEXPAND | wxALL, 5);
+    sizer->Add(m_list_ctrl, wxSizerFlags(1).Expand().Border(wxALL, 5));
 
     wxButton *ok = new wxButton(this, wxID_OK, "Chiudi");
-    sizer->Add(ok, 0, wxALIGN_CENTER_HORIZONTAL | wxALL, 5);
+    sizer->Add(ok, wxSizerFlags().Center().Border(wxALL, 5));
 
     SetSizerAndFit(sizer);
 

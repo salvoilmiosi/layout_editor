@@ -17,7 +17,7 @@ LayoutOptionsDialog::LayoutOptionsDialog(wxWindow *parent, layout_box_list *layo
 
     wxBoxSizer *top_level = new wxBoxSizer(wxVERTICAL);
 
-    top_level->Add(m_setlayout_box, 0, wxEXPAND | wxALL, 5);
+    top_level->Add(m_setlayout_box, wxSizerFlags().Expand().Border(wxALL, 5));
 
     m_language_box = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
 
@@ -36,14 +36,14 @@ LayoutOptionsDialog::LayoutOptionsDialog(wxWindow *parent, layout_box_list *layo
     }
     m_language_box->SetSelection(selection);
 
-    top_level->Add(m_language_box, 0, wxEXPAND | wxALL, 5);
+    top_level->Add(m_language_box, wxSizerFlags().Expand().Border(wxALL, 5));
 
     wxBoxSizer *ok_cancel_sizer = new wxBoxSizer(wxHORIZONTAL);
 
-    ok_cancel_sizer->Add(new wxButton(this, wxID_OK, "OK", wxDefaultPosition, wxSize(100, -1)), 0, wxALL, 5);
-    ok_cancel_sizer->Add(new wxButton(this, wxID_CANCEL, "Annulla", wxDefaultPosition, wxSize(100, -1)), 0, wxALL, 5);
+    ok_cancel_sizer->Add(new wxButton(this, wxID_OK, "OK", wxDefaultPosition, wxSize(100, -1)), wxSizerFlags().Expand().Border(wxALL, 5));
+    ok_cancel_sizer->Add(new wxButton(this, wxID_CANCEL, "Annulla", wxDefaultPosition, wxSize(100, -1)), wxSizerFlags().Expand().Border(wxALL, 5));
 
-    top_level->Add(ok_cancel_sizer, 0, wxALIGN_CENTER_HORIZONTAL);
+    top_level->Add(ok_cancel_sizer, wxSizerFlags().Center());
 
     SetSizerAndFit(top_level);
 }

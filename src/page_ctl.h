@@ -9,8 +9,7 @@ wxDECLARE_EVENT(EVT_PAGE_SELECTED, wxCommandEvent);
 
 class PageCtrl : public wxControl {
 public:
-    PageCtrl(wxWindow *parent, wxWindowID id, int max_pages = 1,
-        const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, const wxValidator &validator = wxDefaultValidator);
+    PageCtrl(wxWindow *parent, wxWindowID id, int max_pages = 1);
     
     int GetValue();
     void SetValue(int value);

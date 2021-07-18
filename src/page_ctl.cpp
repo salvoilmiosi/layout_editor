@@ -19,23 +19,22 @@ END_EVENT_TABLE()
 
 wxDEFINE_EVENT(EVT_PAGE_SELECTED, wxCommandEvent);
 
-PageCtrl::PageCtrl(wxWindow *parent, wxWindowID id, int max_pages, const wxPoint &pos, const wxSize &size, const wxValidator &validator)
-    : wxControl(parent, id, pos, size, wxBORDER_NONE)
+PageCtrl::PageCtrl(wxWindow *parent, wxWindowID id, int max_pages)
+    : wxControl(parent, id, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE)
 {
     wxBoxSizer *sizer = new wxBoxSizer(wxHORIZONTAL);
 
     sizer->Add(new wxBitmapButton(this, PAGE_PREV_BTN, wxArtProvider::GetBitmap(wxART_MINUS), wxDefaultPosition, wxSize(25, 25)));
     sizer->Add(new wxBitmapButton(this, PAGE_NEXT_BTN, wxArtProvider::GetBitmap(wxART_PLUS), wxDefaultPosition, wxSize(25, 25)));
 
-    m_page_ctl = new wxTextCtrl(this, PAGE_SELECT_CTL, wxEmptyString, wxDefaultPosition, wxSize(35, -1), wxTE_RIGHT | wxTE_PROCESS_ENTER);
-    sizer->Add(m_page_ctl, 1, wxALIGN_CENTER_VERTICAL | wxRIGHT, 10);
+    m_page_ctl = new wxTextCtrl(this, PAGE_SELECT_CTL, wxEmptyString, wxDefaultPosition, wxSize(30, -1), wxTE_RIGHT | wxTE_PROCESS_ENTER);
+    sizer->Add(m_page_ctl, wxSizerFlags(1).Center().Border(wxRIGHT, 5));
 
-    m_numpages = new wxStaticText(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(15, -1));
+    m_numpages = new wxStaticText(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(20, -1));
     SetMaxPages(max_pages);
-    sizer->Add(m_numpages, 1, wxALIGN_CENTER_VERTICAL, 0);
+    sizer->Add(m_numpages, wxSizerFlags(0).Center());
 
     SetSizerAndFit(sizer);
-    SetValidator(validator);
 }
 
 int PageCtrl::GetValue() {

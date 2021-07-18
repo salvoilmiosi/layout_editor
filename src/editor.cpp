@@ -172,10 +172,10 @@ frame_editor::frame_editor() : wxFrame(nullptr, wxID_ANY, "Layout Bolletta", wxD
     toolbar_side->AddTool(TOOL_MOVEDOWN, L"Muovi giù", wxArtProvider::GetBitmap(wxART_GO_DOWN), L"Muovi giù");
 
     toolbar_side->Realize();
-    sizer->Add(toolbar_side, 0, wxEXPAND);
+    sizer->Add(toolbar_side, wxSizerFlags().Expand());
 
     m_list_boxes = new wxListBox(m_panel_left, CTL_LIST_BOXES);
-    sizer->Add(m_list_boxes, 1, wxEXPAND);
+    sizer->Add(m_list_boxes, wxSizerFlags(1).Expand());
 
     m_panel_left->SetSizer(sizer);
     m_image = new box_editor_panel(m_splitter, this);
