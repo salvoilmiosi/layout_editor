@@ -107,7 +107,7 @@ wxThread::ExitCode reader_thread::Entry() {
         if (!m_reader.get_notes().empty()) {
             auto *evt = new wxThreadEvent(wxEVT_COMMAND_LAYOUT_ERROR);
             std::string notes = util::string_join(m_reader.get_notes(), "\n\n");
-            evt->SetString(wxString::FromUTF8(notes.c_str()));
+            evt->SetString(wxString::FromUTF8(notes.data(), notes.size()));
             evt->SetInt(0);
             wxQueueEvent(parent, evt);
         }
@@ -189,7 +189,8 @@ void output_dialog::updateItems() {
             if (old_name != key.name) {
                 m_list_ctrl->SetItem(n, col_name, key.name);
             }
-            m_list_ctrl->SetItem(n, col_value, wxString::FromUTF8(var.as_string().c_str()));
+            auto view = var.as_view();
+            m_list_ctrl->SetItem(n, col_value, wxString::FromUTF8(view.data(), view.size()));
             old_name = key.name;
             ++n;
         }
