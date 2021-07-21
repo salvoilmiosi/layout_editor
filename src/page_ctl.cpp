@@ -27,10 +27,10 @@ PageCtrl::PageCtrl(wxWindow *parent, wxWindowID id, int max_pages)
     sizer->Add(new wxBitmapButton(this, PAGE_PREV_BTN, wxArtProvider::GetBitmap(wxART_MINUS), wxDefaultPosition, wxSize(25, 25)), wxSizerFlags().Center());
     sizer->Add(new wxBitmapButton(this, PAGE_NEXT_BTN, wxArtProvider::GetBitmap(wxART_PLUS), wxDefaultPosition, wxSize(25, 25)), wxSizerFlags().Center());
 
-    m_page_ctl = new wxTextCtrl(this, PAGE_SELECT_CTL, wxEmptyString, wxDefaultPosition, wxSize(30, -1), wxTE_RIGHT | wxTE_PROCESS_ENTER);
+    m_page_ctl = new wxTextCtrl(this, PAGE_SELECT_CTL, wxEmptyString, wxDefaultPosition, wxSize(35, -1), wxTE_RIGHT | wxTE_PROCESS_ENTER);
     sizer->Add(m_page_ctl, wxSizerFlags(1).Center().Border(wxRIGHT, 5));
 
-    m_numpages = new wxStaticText(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(20, -1));
+    m_numpages = new wxStaticText(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(35, -1));
     SetMaxPages(max_pages);
     sizer->Add(m_numpages, wxSizerFlags(0).Center());
 

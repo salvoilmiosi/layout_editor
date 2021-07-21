@@ -27,6 +27,9 @@ resources/tool_resize.png
 resources/tool_test.png
 resources/tool_reload.png
 resources/tool_abort.png
+resources/tool_rotate.png
+resources/tool_load_pdf.png
+resources/tool_auto_layout.png
 )
 
 function(embed_resource resource_file_name source_file_name variable_name)

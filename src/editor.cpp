@@ -31,9 +31,9 @@ BEGIN_EVENT_TABLE(frame_editor, wxFrame)
     EVT_MENU (MENU_READDATA, frame_editor::OnReadData)
     EVT_MENU (MENU_EDITCONTROL, frame_editor::OpenControlScript)
     EVT_MENU (MENU_OPEN_LAYOUT_OPTIONS, frame_editor::OnOpenLayoutOptions)
-    EVT_BUTTON(CTL_AUTO_LAYOUT, frame_editor::OnAutoLayout)
-    EVT_BUTTON (CTL_ROTATE, frame_editor::OnRotate)
-    EVT_BUTTON (CTL_LOAD_PDF, frame_editor::OnLoadPdf)
+    EVT_TOOL (CTL_AUTO_LAYOUT, frame_editor::OnAutoLayout)
+    EVT_TOOL (CTL_ROTATE, frame_editor::OnRotate)
+    EVT_TOOL (CTL_LOAD_PDF, frame_editor::OnLoadPdf)
     EVT_COMMAND(CTL_PAGE, EVT_PAGE_SELECTED, frame_editor::OnPageSelect)
     EVT_COMMAND_SCROLL_THUMBTRACK (CTL_SCALE, frame_editor::OnScaleChange)
     EVT_COMMAND_SCROLL_CHANGED (CTL_SCALE, frame_editor::OnScaleChangeFinal)
@@ -55,6 +55,9 @@ DECLARE_RESOURCE(tool_newbox_png)
 DECLARE_RESOURCE(tool_deletebox_png)
 DECLARE_RESOURCE(tool_resize_png)
 DECLARE_RESOURCE(tool_test_png)
+DECLARE_RESOURCE(tool_rotate_png)
+DECLARE_RESOURCE(tool_load_pdf_png)
+DECLARE_RESOURCE(tool_auto_layout_png)
 
 constexpr size_t MAX_HISTORY_SIZE = 20;
 
@@ -128,23 +131,20 @@ frame_editor::frame_editor() : wxFrame(nullptr, wxID_ANY, "Layout Bolletta", wxD
     toolbar_top->AddTool(MENU_COPY, "Copia", wxArtProvider::GetBitmap(wxART_COPY), "Copia");
     toolbar_top->AddTool(MENU_PASTE, "Incolla", wxArtProvider::GetBitmap(wxART_PASTE), "Incolla");
 
-    toolbar_top->AddTool(MENU_READDATA, "Leggi Layout", wxArtProvider::GetBitmap(wxART_REPORT_VIEW), "Leggi Layout");
+    toolbar_top->AddSeparator();
+
+    toolbar_top->AddTool(CTL_LOAD_PDF, "Carica PDF", loadPNG(tool_load_pdf_png), "Carica PDF");
+    toolbar_top->AddTool(CTL_AUTO_LAYOUT, "Auto Layout", loadPNG(tool_auto_layout_png), "Auto Layout");
+    toolbar_top->AddTool(MENU_READDATA, "Avvia Lettura", wxArtProvider::GetBitmap(wxART_REPORT_VIEW), "Avvia Lettura");
 
     toolbar_top->AddStretchableSpace();
-
-    wxButton *btn_rotate = new wxButton(toolbar_top, CTL_ROTATE, "Ruota Immagine", wxDefaultPosition, wxSize(100, -1));
-    toolbar_top->AddControl(btn_rotate, "Ruota in senso orario");
-
-    wxButton *btn_load_pdf = new wxButton(toolbar_top, CTL_LOAD_PDF, "Carica PDF", wxDefaultPosition, wxSize(100, -1));
-    toolbar_top->AddControl(btn_load_pdf, "Carica un file PDF");
-
-    wxButton *btn_auto_layout = new wxButton(toolbar_top, CTL_AUTO_LAYOUT, "Auto Layout", wxDefaultPosition, wxSize(100, -1));
-    toolbar_top->AddControl(btn_auto_layout, "Determina il layout di questo file automaticamente");
+    
+    toolbar_top->AddTool(CTL_ROTATE, "Ruota Immagine", loadPNG(tool_rotate_png), "Ruota Immagine");
 
     m_page = new PageCtrl(toolbar_top, CTL_PAGE);
     toolbar_top->AddControl(m_page, "Pagina");
 
-    m_scale = new wxSlider(toolbar_top, CTL_SCALE, 50, 1, 100, wxDefaultPosition, wxSize(120, -1));
+    m_scale = new wxSlider(toolbar_top, CTL_SCALE, 50, 1, 100, wxDefaultPosition, wxSize(150, -1));
     toolbar_top->AddControl(m_scale, "Scala");
 
     toolbar_top->Realize();
@@ -156,15 +156,11 @@ frame_editor::frame_editor() : wxFrame(nullptr, wxID_ANY, "Layout Bolletta", wxD
 
     wxToolBar *toolbar_side = new wxToolBar(m_panel_left, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_VERTICAL);
 
-    auto loadPNG = [](const auto &resource) {
-        return wxBitmap::NewFromPNGData(resource.data, resource.len);
-    };
-
-    toolbar_side->AddRadioTool(TOOL_SELECT, "Seleziona", loadPNG(GET_RESOURCE(tool_select_png)), wxNullBitmap, "Seleziona");
-    toolbar_side->AddRadioTool(TOOL_NEWBOX, "Nuovo rettangolo", loadPNG(GET_RESOURCE(tool_newbox_png)), wxNullBitmap, "Nuovo rettangolo");
-    toolbar_side->AddRadioTool(TOOL_DELETEBOX, "Cancella rettangolo", loadPNG(GET_RESOURCE(tool_deletebox_png)), wxNullBitmap, "Cancella rettangolo");
-    toolbar_side->AddRadioTool(TOOL_RESIZE, "Ridimensiona rettangolo", loadPNG(GET_RESOURCE(tool_resize_png)), wxNullBitmap, "Ridimensiona rettangolo");
-    toolbar_side->AddRadioTool(TOOL_TEST, "Test rettangolo", loadPNG(GET_RESOURCE(tool_test_png)), wxNullBitmap, "Test rettangolo");
+    toolbar_side->AddRadioTool(TOOL_SELECT, "Seleziona", loadPNG(tool_select_png), wxNullBitmap, "Seleziona");
+    toolbar_side->AddRadioTool(TOOL_NEWBOX, "Nuovo rettangolo", loadPNG(tool_newbox_png), wxNullBitmap, "Nuovo rettangolo");
+    toolbar_side->AddRadioTool(TOOL_DELETEBOX, "Cancella rettangolo", loadPNG(tool_deletebox_png), wxNullBitmap, "Cancella rettangolo");
+    toolbar_side->AddRadioTool(TOOL_RESIZE, "Ridimensiona rettangolo", loadPNG(tool_resize_png), wxNullBitmap, "Ridimensiona rettangolo");
+    toolbar_side->AddRadioTool(TOOL_TEST, "Test rettangolo", loadPNG(tool_test_png), wxNullBitmap, "Test rettangolo");
 
     toolbar_side->AddSeparator();
 
@@ -189,7 +185,7 @@ frame_editor::frame_editor() : wxFrame(nullptr, wxID_ANY, "Layout Bolletta", wxD
         return icon;
     };
 
-    SetIcon(loadIcon(GET_RESOURCE(icon_editor_png)));
+    SetIcon(loadIcon(icon_editor_png));
     Show();
 
     currentHistory = history.begin();

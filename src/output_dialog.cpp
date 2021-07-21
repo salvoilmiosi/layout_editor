@@ -41,12 +41,8 @@ output_dialog::output_dialog(frame_editor *parent) :
 
     wxToolBar *toolbar = new wxToolBar(this, wxID_ANY);
 
-    auto loadPNG = [](const auto &resource) {
-        return wxBitmap::NewFromPNGData(resource.data, resource.len);
-    };
-
-    toolbar->AddTool(TOOL_UPDATE, "Aggiorna", loadPNG(GET_RESOURCE(tool_reload_png)));
-    toolbar->AddTool(TOOL_ABORT, "Stop", loadPNG(GET_RESOURCE(tool_abort_png)));
+    toolbar->AddTool(TOOL_UPDATE, "Aggiorna", loadPNG(tool_reload_png));
+    toolbar->AddTool(TOOL_ABORT, "Stop", loadPNG(tool_abort_png));
 
     toolbar->AddStretchableSpace();
 
