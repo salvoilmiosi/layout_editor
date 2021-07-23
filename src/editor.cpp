@@ -79,6 +79,7 @@ DECLARE_RESOURCE(tool_move_page_png)
 DECLARE_RESOURCE(tool_rotate_png)
 DECLARE_RESOURCE(tool_load_pdf_png)
 DECLARE_RESOURCE(tool_auto_layout_png)
+DECLARE_RESOURCE(tool_settings_png)
 
 constexpr size_t MAX_HISTORY_SIZE = 20;
 
@@ -125,13 +126,10 @@ frame_editor::frame_editor() : wxFrame(nullptr, wxID_ANY, "Layout Bolletta", wxD
     menuEdit->Append(MENU_DELETE, "&Cancella Selezione\tDel", "Cancella il rettangolo selezionato");
     menuBar->Append(menuEdit, "&Modifica");
 
-    wxMenu *menuLayout = new wxMenu;
-    menuLayout->Append(MENU_EDITBOX, "Modifica &Rettangolo\tCtrl-E", "Modifica il rettangolo selezionato");
-    menuLayout->Append(MENU_READDATA, "L&eggi Layout\tCtrl-R", "Test della lettura dei dati");
-    menuLayout->Append(MENU_EDITCONTROL, "Modifica script di &controllo\tCtrl-L");
-    menuLayout->Append(MENU_OPEN_LAYOUT_OPTIONS, "Cambia Opzioni Di Layout");
+    wxMenu *menuEditor = new wxMenu;
+    menuEditor->Append(MENU_EDITCONTROL, "Modifica &script di controllo");
 
-    menuBar->Append(menuLayout, "&Layout");
+    menuBar->Append(menuEditor, "&Editor");
 
     SetMenuBar(menuBar);
 
@@ -157,6 +155,7 @@ frame_editor::frame_editor() : wxFrame(nullptr, wxID_ANY, "Layout Bolletta", wxD
     toolbar_top->AddTool(CTL_LOAD_PDF, "Carica PDF", loadPNG(tool_load_pdf_png), "Carica PDF");
     toolbar_top->AddTool(CTL_AUTO_LAYOUT, "Auto Layout", loadPNG(tool_auto_layout_png), "Auto Layout");
     toolbar_top->AddTool(MENU_READDATA, "Avvia Lettura", wxArtProvider::GetBitmap(wxART_REPORT_VIEW), "Avvia Lettura");
+    toolbar_top->AddTool(MENU_OPEN_LAYOUT_OPTIONS, "Opzioni Layout", loadPNG(tool_settings_png), "Opzioni Layout");
 
     toolbar_top->AddStretchableSpace();
     

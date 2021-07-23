@@ -9,7 +9,7 @@ BEGIN_EVENT_TABLE(LayoutOptionsDialog, wxDialog)
 END_EVENT_TABLE()
 
 LayoutOptionsDialog::LayoutOptionsDialog(wxWindow *parent, layout_box_list *layout) :
-    wxDialog(parent, wxID_ANY, "Cambia Opzioni Di Layout", wxDefaultPosition, wxSize(400, 500), wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER),
+    wxDialog(parent, wxID_ANY, "Cambia Opzioni Di Layout", wxDefaultPosition, wxSize(400, 500)),
     m_layout(layout)
 {
     m_setlayout_box = new wxCheckBox(this, wxID_ANY, "Carica in Auto Layout");

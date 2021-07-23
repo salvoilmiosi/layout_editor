@@ -32,6 +32,7 @@ resources/tool_abort.png
 resources/tool_rotate.png
 resources/tool_load_pdf.png
 resources/tool_auto_layout.png
+resources/tool_settings.png
 )
 
 function(embed_resource resource_file_name source_file_name variable_name)
