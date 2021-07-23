@@ -20,9 +20,9 @@ enum {
 
 wxDEFINE_EVENT(wxEVT_COMMAND_READ_COMPLETE, wxThreadEvent);
 wxDEFINE_EVENT(wxEVT_COMMAND_LAYOUT_ERROR, wxThreadEvent);
+
 BEGIN_EVENT_TABLE(output_dialog, wxDialog)
     EVT_MENU(TOOL_UPDATE, output_dialog::OnClickUpdate)
-    EVT_MENU(TOOL_ABORT, output_dialog::OnClickAbort)
     EVT_CHECKBOX(CTL_DEBUG, output_dialog::OnUpdate)
     EVT_CHECKBOX(CTL_GLOBALS, output_dialog::OnUpdate)
     EVT_COMMAND(CTL_OUTPUT_PAGE, EVT_PAGE_SELECTED, output_dialog::OnUpdate)
@@ -39,25 +39,24 @@ output_dialog::output_dialog(frame_editor *parent) :
 {
     wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 
-    wxToolBar *toolbar = new wxToolBar(this, wxID_ANY);
+    m_toolbar = new wxToolBar(this, wxID_ANY);
 
-    toolbar->AddTool(TOOL_UPDATE, "Aggiorna", loadPNG(tool_reload_png));
-    toolbar->AddTool(TOOL_ABORT, "Stop", loadPNG(tool_abort_png));
+    m_toolbar->AddTool(TOOL_UPDATE, "Aggiorna", loadPNG(tool_reload_png));
 
-    toolbar->AddStretchableSpace();
+    m_toolbar->AddStretchableSpace();
 
-    m_show_debug = new wxCheckBox(toolbar, CTL_DEBUG, "Debug");
-    toolbar->AddControl(m_show_debug, "Debug");
+    m_show_debug = new wxCheckBox(m_toolbar, CTL_DEBUG, "Debug");
+    m_toolbar->AddControl(m_show_debug, "Debug");
 
-    m_show_globals = new wxCheckBox(toolbar, CTL_GLOBALS, "Globali");
-    toolbar->AddControl(m_show_globals, "Globali");
+    m_show_globals = new wxCheckBox(m_toolbar, CTL_GLOBALS, "Globali");
+    m_toolbar->AddControl(m_show_globals, "Globali");
 
-    m_page = new PageCtrl(toolbar, CTL_OUTPUT_PAGE);
+    m_page = new PageCtrl(m_toolbar, CTL_OUTPUT_PAGE);
 
-    toolbar->AddControl(m_page, "Pagina");
+    m_toolbar->AddControl(m_page, "Pagina");
 
-    toolbar->Realize();
-    sizer->Add(toolbar, wxSizerFlags().Expand());
+    m_toolbar->Realize();
+    sizer->Add(m_toolbar, wxSizerFlags().Expand());
 
     m_list_ctrl = new wxListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(320, 450), wxLC_REPORT);
 
@@ -72,14 +71,11 @@ output_dialog::output_dialog(frame_editor *parent) :
 }
 
 void output_dialog::OnClickUpdate(wxCommandEvent &) {
-    compileAndRead();
-}
-
-void output_dialog::OnClickAbort(wxCommandEvent &) {
     if (m_thread) {
         m_reader.abort();
+        m_toolbar->SetToolNormalBitmap(TOOL_UPDATE, loadPNG(tool_reload_png));
     } else {
-        wxBell();
+        compileAndRead();
     }
 }
 
@@ -128,6 +124,8 @@ void output_dialog::compileAndRead() {
     if (m_thread || ! parent->getPdfDocument().isopen()) {
         wxBell();
     } else {
+        m_toolbar->SetToolNormalBitmap(TOOL_UPDATE, loadPNG(tool_abort_png));
+
         m_reader.clear();
         m_reader.set_document(parent->getPdfDocument());
         m_thread = new reader_thread(this, m_reader, parent->layout);
@@ -142,6 +140,8 @@ void output_dialog::compileAndRead() {
 }
 
 void output_dialog::OnLayoutError(wxCommandEvent &evt) {
+    m_toolbar->SetToolNormalBitmap(TOOL_UPDATE, loadPNG(tool_reload_png));
+
     int errcode = evt.GetInt();
     if (errcode == 0) {
         error_dialog->SetTitle("Note");
@@ -154,6 +154,7 @@ void output_dialog::OnLayoutError(wxCommandEvent &evt) {
 }
 
 void output_dialog::OnReadCompleted(wxCommandEvent &evt) {
+    m_toolbar->SetToolNormalBitmap(TOOL_UPDATE, loadPNG(tool_reload_png));
     m_page->SetMaxPages(m_reader.get_table_count());
     updateItems();
 }

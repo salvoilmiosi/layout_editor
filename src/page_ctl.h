@@ -18,9 +18,12 @@ public:
     void SetMaxPages(int value);
 
 private:
+    void selectPage(int amt);
+
     void OnPageEnter(wxCommandEvent &evt);
     void OnPrevPage(wxCommandEvent &evt);
     void OnNextPage(wxCommandEvent &evt);
+    void OnMouseScroll(wxMouseEvent &evt);
 
     void sendPageSelectedEvent();
 

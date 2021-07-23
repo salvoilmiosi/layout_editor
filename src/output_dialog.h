@@ -41,6 +41,7 @@ private:
     wxCheckBox *m_show_debug;
     PageCtrl *m_page;
     wxListCtrl *m_list_ctrl;
+    wxToolBar *m_toolbar;
 
     reader_thread *m_thread = nullptr;
     reader m_reader;
@@ -50,7 +51,6 @@ private:
     void OnUpdate(wxCommandEvent &evt);
 
     void OnClickUpdate(wxCommandEvent &evt);
-    void OnClickAbort(wxCommandEvent &evt);
 
     void OnReadCompleted(wxCommandEvent &evt);
     void OnLayoutError(wxCommandEvent &evt);

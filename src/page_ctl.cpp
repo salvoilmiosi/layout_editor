@@ -15,6 +15,7 @@ BEGIN_EVENT_TABLE(PageCtrl, wxControl)
     EVT_TEXT_ENTER(PAGE_SELECT_CTL, PageCtrl::OnPageEnter)
     EVT_BUTTON(PAGE_PREV_BTN, PageCtrl::OnPrevPage)
     EVT_BUTTON(PAGE_NEXT_BTN, PageCtrl::OnNextPage)
+    EVT_MOUSEWHEEL(PageCtrl::OnMouseScroll)
 END_EVENT_TABLE()
 
 wxDEFINE_EVENT(EVT_PAGE_SELECTED, wxCommandEvent);
@@ -63,21 +64,29 @@ void PageCtrl::OnPageEnter(wxCommandEvent &evt) {
     sendPageSelectedEvent();
 }
 
-void PageCtrl::OnPrevPage(wxCommandEvent &evt) {
-    if (m_value > 1) {
-        SetValue(m_value-1);
+void PageCtrl::selectPage(int value) {
+    if (value >= 1 && value <= GetMaxPages()) {
+        SetValue(value);
         sendPageSelectedEvent();
     } else {
         wxBell();
     }
 }
 
+void PageCtrl::OnPrevPage(wxCommandEvent &evt) {
+    selectPage(m_value - 1);
+}
+
 void PageCtrl::OnNextPage(wxCommandEvent &evt) {
-    if (m_value < GetMaxPages()) {
-        SetValue(m_value+1);
-        sendPageSelectedEvent();
-    } else {
-        wxBell();
+    selectPage(m_value + 1);
+}
+
+void PageCtrl::OnMouseScroll(wxMouseEvent &evt) {
+    int rot = evt.GetWheelRotation();
+    if (rot > 0) {
+        selectPage(m_value - 1);
+    } else if (rot < 0) {
+        selectPage(m_value + 1);
     }
 }
 
