@@ -13,6 +13,7 @@ src/editor_evt.cpp
 src/image_panel.cpp
 src/layout_options_dialog.cpp
 src/main.cpp
+src/move_page_dialog.cpp
 src/output_dialog.cpp
 src/page_ctl.cpp
 src/pdf_to_image.cpp
@@ -25,6 +26,7 @@ resources/tool_newbox.png
 resources/tool_deletebox.png
 resources/tool_resize.png
 resources/tool_test.png
+resources/tool_move_page.png
 resources/tool_reload.png
 resources/tool_abort.png
 resources/tool_rotate.png

@@ -12,6 +12,25 @@
 #include "pdf_to_image.h"
 #include "box_dialog.h"
 
+enum {
+    MENU_NEW = 10000, MENU_OPEN, MENU_SAVE, MENU_SAVEAS, MENU_CLOSE,
+    MENU_UNDO, MENU_REDO, MENU_CUT, MENU_COPY, MENU_PASTE,
+    MENU_LOAD_PDF, MENU_EDITBOX, MENU_DELETE, MENU_READDATA,
+    MENU_EDITCONTROL, MENU_OPEN_LAYOUT_OPTIONS,
+
+    MENU_OPEN_RECENT,
+    MENU_OPEN_RECENT_END = MENU_OPEN_RECENT + MAX_RECENT_FILES_HISTORY,
+    
+    MENU_OPEN_PDF_RECENT,
+    MENU_OPEN_PDF_RECENT_END = MENU_OPEN_PDF_RECENT + MAX_RECENT_PDFS_HISTORY,
+
+    CTL_ROTATE, CTL_LOAD_PDF, CTL_AUTO_LAYOUT, CTL_PAGE, CTL_SCALE,
+
+    TOOL_MOVEUP, TOOL_MOVEDOWN,
+    
+    CTL_LIST_BOXES,
+};
+
 BEGIN_EVENT_TABLE(frame_editor, wxFrame)
     EVT_MENU (MENU_NEW, frame_editor::OnNewFile)
     EVT_MENU (MENU_OPEN, frame_editor::OnOpenFile)
@@ -42,6 +61,7 @@ BEGIN_EVENT_TABLE(frame_editor, wxFrame)
     EVT_TOOL (TOOL_DELETEBOX, frame_editor::OnChangeTool)
     EVT_TOOL (TOOL_RESIZE, frame_editor::OnChangeTool)
     EVT_TOOL (TOOL_TEST, frame_editor::OnChangeTool)
+    EVT_TOOL (TOOL_MOVEPAGE, frame_editor::OnChangeTool)
     EVT_TOOL (TOOL_MOVEUP, frame_editor::OnMoveUp)
     EVT_TOOL (TOOL_MOVEDOWN, frame_editor::OnMoveDown)
     EVT_LISTBOX (CTL_LIST_BOXES, frame_editor::OnSelectBox)
@@ -55,6 +75,7 @@ DECLARE_RESOURCE(tool_newbox_png)
 DECLARE_RESOURCE(tool_deletebox_png)
 DECLARE_RESOURCE(tool_resize_png)
 DECLARE_RESOURCE(tool_test_png)
+DECLARE_RESOURCE(tool_move_page_png)
 DECLARE_RESOURCE(tool_rotate_png)
 DECLARE_RESOURCE(tool_load_pdf_png)
 DECLARE_RESOURCE(tool_auto_layout_png)
@@ -161,6 +182,7 @@ frame_editor::frame_editor() : wxFrame(nullptr, wxID_ANY, "Layout Bolletta", wxD
     toolbar_side->AddRadioTool(TOOL_DELETEBOX, "Cancella rettangolo", loadPNG(tool_deletebox_png), wxNullBitmap, "Cancella rettangolo");
     toolbar_side->AddRadioTool(TOOL_RESIZE, "Ridimensiona rettangolo", loadPNG(tool_resize_png), wxNullBitmap, "Ridimensiona rettangolo");
     toolbar_side->AddRadioTool(TOOL_TEST, "Test rettangolo", loadPNG(tool_test_png), wxNullBitmap, "Test rettangolo");
+    toolbar_side->AddRadioTool(TOOL_MOVEPAGE, "Sposta tra pagine", loadPNG(tool_move_page_png), wxNullBitmap, "Sposta tra pagine");
 
     toolbar_side->AddSeparator();
 

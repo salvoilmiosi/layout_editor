@@ -7,6 +7,10 @@
 
 using namespace bls;
 
+enum {
+    TOOL_SELECT = 20000, TOOL_NEWBOX, TOOL_DELETEBOX, TOOL_RESIZE, TOOL_TEST, TOOL_MOVEPAGE
+};
+
 DEFINE_ENUM_FLAGS(direction,
     (TOP)
     (LEFT)

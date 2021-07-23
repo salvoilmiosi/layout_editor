@@ -5,6 +5,8 @@
 #include <wx/choicdlg.h>
 #include <wx/dcbuffer.h>
 
+#include "move_page_dialog.h"
+
 BEGIN_EVENT_TABLE(box_editor_panel, wxImagePanel)
     EVT_LEFT_DOWN(box_editor_panel::OnMouseDown)
     EVT_LEFT_UP(box_editor_panel::OnMouseUp)
@@ -158,6 +160,16 @@ void box_editor_panel::OnMouseDown(wxMouseEvent &evt) {
             }
             break;
         }
+        case TOOL_MOVEPAGE: {
+            auto it = getBoxAt(start_pt.x, start_pt.y);
+            if (it != app->layout.end()) {
+                app->selectBox(&*it);
+                MovePageDialog(app, &*it).ShowModal();
+            } else {
+                app->selectBox(nullptr);
+            }
+            break;
+        }
         }
     }
     evt.Skip();
@@ -192,8 +204,8 @@ void box_editor_panel::OnMouseUp(wxMouseEvent &evt) {
             }
             case TOOL_TEST: {
                 static auto choices = []<size_t ... Is> (std::index_sequence<Is...>) {
-                    auto initlist = {wxString(std::get<const char *>(enums::get_data(static_cast<read_mode>(Is)))) ... };
-                    return wxArrayString(initlist.begin(), initlist.end());
+                    wxString strings[] = {std::get<const char *>(enums::get_data(static_cast<read_mode>(Is))) ... };
+                    return wxArrayString(sizeof(strings) / sizeof(wxString), strings);
                 } (std::make_index_sequence<enums::size<read_mode>()>{});
                 wxSingleChoiceDialog diag(this, L"Modalità di lettura:", "Test Lettura Rettangolo", choices);
                 if (diag.ShowModal() == wxID_OK) {
