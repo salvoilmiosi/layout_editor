@@ -152,7 +152,7 @@ void output_dialog::OnLayoutError(wxCommandEvent &evt) {
 
 void output_dialog::OnReadCompleted(wxCommandEvent &evt) {
     m_toolbar->SetToolNormalBitmap(TOOL_UPDATE, loadPNG(tool_reload_png));
-    m_page->SetMaxPages(m_reader.get_table_count());
+    m_page->SetMaxPages(m_reader.get_values().size());
     updateItems();
 }
 
@@ -167,32 +167,25 @@ void output_dialog::updateItems() {
     auto col_name = m_list_ctrl->AppendColumn("Nome", wxLIST_FORMAT_LEFT, 150);
     auto col_value = m_list_ctrl->AppendColumn("Valore", wxLIST_FORMAT_LEFT, 150);
 
-    auto display_page = [&](int table_index) {
+    auto display_table = [&](const variable_map &table) {
         size_t n=0;
-        std::string old_name;
-        for (auto &[key, var] : m_reader.get_values()) {
-            if (key.table_index != table_index) continue;
-
-            if (!m_show_debug->GetValue() && key.name.front() == '_') {
+        for (const auto &[key, var] : table) {
+            if (!m_show_debug->GetValue() && key.front() == '_') {
                 continue;
             }
             wxListItem item;
             item.SetId(n);
             m_list_ctrl->InsertItem(item);
-
-            if (old_name != key.name) {
-                m_list_ctrl->SetItem(n, col_name, key.name);
-            }
+            m_list_ctrl->SetItem(n, col_name, key);
             auto view = var.as_view();
             m_list_ctrl->SetItem(n, col_value, wxString::FromUTF8(view.data(), view.size()));
-            old_name = key.name;
             ++n;
         }
     };
 
     if (m_show_globals->GetValue()) {
-        display_page(variable_key::global_index);
+        display_table(m_reader.get_globals());
     } else {
-        display_page(m_page->GetValue() - 1);
+        display_table(*std::next(m_reader.get_values().begin(), m_page->GetValue() - 1));
     }
 }
