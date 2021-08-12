@@ -6,11 +6,16 @@
 
 #include <wx/string.h>
 
+namespace util {
+    inline wxString to_wx(std::string_view str) {
+        return wxString::FromUTF8(str.data(), str.size());
+    }
+}
+
 namespace intl {
     template<typename T, typename ... Ts>
     inline wxString wxformat(T &&fmt_str, Ts && ... args) {
-        std::string str = format(std::forward<T>(fmt_str), std::forward<Ts>(args) ...);
-        return wxString::FromUTF8(str.data(), str.size());
+        return util::to_wx(format(std::forward<T>(fmt_str), std::forward<Ts>(args) ...));
     }
 }
 

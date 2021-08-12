@@ -95,20 +95,19 @@ wxThread::ExitCode reader_thread::Entry() {
 
         if (!m_reader.get_notes().empty()) {
             auto *evt = new wxThreadEvent(wxEVT_COMMAND_LAYOUT_ERROR);
-            std::string notes = util::string_join(m_reader.get_notes(), "\n\n");
-            evt->SetString(wxString::FromUTF8(notes.data(), notes.size()));
+            evt->SetString(util::to_wx(util::string_join(m_reader.get_notes(), "\n\n")));
             evt->SetInt(0);
             wxQueueEvent(parent, evt);
         }
         return (wxThread::ExitCode) 0;
     } catch (const layout_runtime_error &error) {
         auto *evt = new wxThreadEvent(wxEVT_COMMAND_LAYOUT_ERROR);
-        evt->SetString(wxString::FromUTF8(error.what()));
+        evt->SetString(util::to_wx(error.what()));
         evt->SetInt(error.errcode);
         wxQueueEvent(parent, evt);
     } catch (const std::exception &error) {
         auto *evt = new wxThreadEvent(wxEVT_COMMAND_LAYOUT_ERROR);
-        evt->SetString(wxString::FromUTF8(error.what()));
+        evt->SetString(util::to_wx(error.what()));
         evt->SetInt(-1);
         wxQueueEvent(parent, evt);
     } catch (reader_aborted) {
@@ -177,8 +176,7 @@ void output_dialog::updateItems() {
             item.SetId(n);
             m_list_ctrl->InsertItem(item);
             m_list_ctrl->SetItem(n, col_name, key);
-            auto view = var.as_view();
-            m_list_ctrl->SetItem(n, col_value, wxString::FromUTF8(view.data(), view.size()));
+            m_list_ctrl->SetItem(n, col_value, util::to_wx(var.as_view()));
             ++n;
         }
     };

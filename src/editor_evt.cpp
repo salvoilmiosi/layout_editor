@@ -26,7 +26,8 @@ void frame_editor::OnNewFile(wxCommandEvent &evt) {
 
 void frame_editor::OnOpenFile(wxCommandEvent &evt) {
     wxString lastLayoutDir = m_config->Read("LastLayoutDir");
-    wxFileDialog diag(this, intl::wxformat("OPEN_LAYOUT_DIALOG"), lastLayoutDir, wxEmptyString, intl::wxformat("OPEN_LAYOUT_DIALOG_OPTIONS"));
+    wxFileDialog diag(this, intl::wxformat("OPEN_LAYOUT_DIALOG"), lastLayoutDir, wxEmptyString,
+        util::to_wx(std::format("{} (*.bls)|*.bls|{} (*.*)|*.*", intl::format("Layout files"), intl::format("All files"))));
 
     if (diag.ShowModal() == wxID_CANCEL)
         return;
@@ -159,7 +160,8 @@ void frame_editor::OnRotate(wxCommandEvent &evt) {
 
 void frame_editor::OnLoadPdf(wxCommandEvent &evt) {
     wxString lastPdfDir = m_config->Read("LastPdfDir");
-    wxFileDialog diag(this, intl::wxformat("OPEN_PDF_DIALOG"), lastPdfDir, wxEmptyString, intl::wxformat("OPEN_PDF_DIALOG_OPTIONS"));
+    wxFileDialog diag(this, intl::wxformat("OPEN_PDF_DIALOG"), lastPdfDir, wxEmptyString,
+        util::to_wx(std::format("{} (*.pdf)|*.pdf|{} (*.*)|*.*", intl::format("PDF files"), intl::format("All files"))));
 
     if (diag.ShowModal() == wxID_CANCEL)
         return;

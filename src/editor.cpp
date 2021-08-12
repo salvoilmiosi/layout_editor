@@ -235,7 +235,8 @@ void frame_editor::openFile(const wxString &filename) {
 bool frame_editor::save(bool saveAs) {
     if (m_filename.empty() || saveAs) {
         wxString lastLayoutDir = m_config->Read("LastLayoutDir");
-        wxFileDialog diag(this, intl::wxformat("SAVE_LAYOUT_DIALOG"), lastLayoutDir, m_filename.string(), intl::wxformat("OPEN_LAYOUT_DIALOG_OPTIONS"), wxFD_SAVE);
+        wxFileDialog diag(this, intl::wxformat("SAVE_LAYOUT_DIALOG"), lastLayoutDir, m_filename.string(), 
+            util::to_wx(std::format("{} (*.bls)|*.bls|{} (*.*)|*.*", intl::format("Layout files"), intl::format("All files"))), wxFD_SAVE);
 
         if (diag.ShowModal() == wxID_CANCEL)
             return false;
@@ -314,7 +315,8 @@ void frame_editor::loadPdf(const wxString &filename) {
 wxString frame_editor::getControlScript(bool open_dialog) {
     wxString filename = m_config->Read("ControlScriptFilename");
     if (filename.empty() || open_dialog) {
-        wxFileDialog diag(this, intl::wxformat("OPEN_CONTROL_SCRIPT_DIALOG"), wxFileName(filename).GetPath(), wxEmptyString, intl::wxformat("OPEN_LAYOUT_DIALOG_OPTIONS"));
+        wxFileDialog diag(this, intl::wxformat("OPEN_CONTROL_SCRIPT_DIALOG"), wxFileName(filename).GetPath(), wxEmptyString,
+            util::to_wx(std::format("{} (*.bls)|*.bls|{} (*.*)|*.*", intl::format("Layout files"), intl::format("All files"))));
 
         if (diag.ShowModal() == wxID_OK) {
             filename = diag.GetPath();

@@ -207,7 +207,7 @@ void box_editor_panel::OnMouseUp(wxMouseEvent &evt) {
                     wxString strings[] = {enums::get_label(static_cast<read_mode>(Is)) ... };
                     return wxArrayString(sizeof(strings) / sizeof(wxString), strings);
                 } (std::make_index_sequence<enums::size<read_mode>()>{});
-                wxSingleChoiceDialog diag(this, L"Modalità di lettura:", "Test Lettura Rettangolo", choices);
+                wxSingleChoiceDialog diag(this, intl::wxformat("DIALOG_TEST_READ_MODE"), intl::wxformat("DIALOG_TEST_READ_TITLE"), choices);
                 if (diag.ShowModal() == wxID_OK) {
                     pdf_rect box;
                     box.x = std::min(start_pt.x, end_pt.x);
@@ -217,8 +217,7 @@ void box_editor_panel::OnMouseUp(wxMouseEvent &evt) {
                     box.page = app->getSelectedPage();
                     box.mode = static_cast<read_mode>(diag.GetSelection());
                     box.rotate(app->getBoxRotation());
-                    std::string text = app->getPdfDocument().get_text(box);
-                    info_dialog->ShowText(wxString::FromUTF8(text.data(), text.size()));
+                    info_dialog->ShowText(util::to_wx(app->getPdfDocument().get_text(box)));
                 }
                 break;
             }

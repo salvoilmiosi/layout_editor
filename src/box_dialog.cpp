@@ -100,7 +100,7 @@ public:
     virtual bool TransferToWindow() override {
         if (m_value) {
             WindowType *ctl = dynamic_cast<WindowType*>(GetWindow());
-            ctl->SetValue(wxString::FromUTF8(m_value->data(), m_value->size()));
+            ctl->SetValue(util::to_wx(*m_value));
         }
         return true;
     }
@@ -253,7 +253,7 @@ void box_dialog::OnTest(wxCommandEvent &evt) {
     TransferDataFromWindow();
     m_box.rotate(app->getBoxRotation());
     std::string text = app->getPdfDocument().get_text(m_box);
-    reader_output->ShowText(wxString::FromUTF8(text.data(), text.size()));
+    reader_output->ShowText(util::to_wx(app->getPdfDocument().get_text(m_box)));
     m_box = box_copy;
 }
 
