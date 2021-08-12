@@ -83,7 +83,7 @@ DECLARE_RESOURCE(tool_settings_png)
 
 constexpr size_t MAX_HISTORY_SIZE = 20;
 
-frame_editor::frame_editor() : wxFrame(nullptr, wxID_ANY, "Layout Bolletta", wxDefaultPosition, wxSize(900, 700)) {
+frame_editor::frame_editor() : wxFrame(nullptr, wxID_ANY, intl::wxformat("PROGRAM_NAME"), wxDefaultPosition, wxSize(900, 700)) {
     m_config = new wxConfig("BillLayoutScript");
 
     wxMenuBar *menuBar = new wxMenuBar();
@@ -103,69 +103,69 @@ frame_editor::frame_editor() : wxFrame(nullptr, wxID_ANY, "Layout Bolletta", wxD
     m_config->SetPath("/");
 
     wxMenu *menuFile = new wxMenu;
-    menuFile->Append(MENU_NEW, "&Nuovo\tCtrl-N", "Crea un Nuovo Layout");
-    menuFile->Append(MENU_OPEN, "&Apri...\tCtrl-O", "Apri un Layout");
-    menuFile->AppendSubMenu(m_bls_history_menu, "Apri &Recenti");
-    menuFile->Append(MENU_SAVE, "&Salva\tCtrl-S", "Salva il Layout");
-    menuFile->Append(MENU_SAVEAS, "Sa&lva con nome...\tCtrl-Shift-S", "Salva il Layout con nome...");
+    menuFile->Append(MENU_NEW, intl::wxformat("MENU_NEW"), intl::wxformat("MENU_NEW_HINT"));
+    menuFile->Append(MENU_OPEN, intl::wxformat("MENU_OPEN"), intl::wxformat("MENU_OPEN_HINT"));
+    menuFile->AppendSubMenu(m_bls_history_menu, intl::wxformat("MENU_RECENT"));
+    menuFile->Append(MENU_SAVE, intl::wxformat("MENU_SAVE"), intl::wxformat("MENU_SAVE_HINT"));
+    menuFile->Append(MENU_SAVEAS, intl::wxformat("MENU_SAVEAS"), intl::wxformat("MENU_SAVEAS_HINT"));
     menuFile->AppendSeparator();
-    menuFile->Append(MENU_LOAD_PDF, "Carica &PDF\tCtrl-L", "Carica un file PDF");
-    menuFile->AppendSubMenu(m_pdf_history_menu, "PDF Recenti...");
+    menuFile->Append(MENU_LOAD_PDF, intl::wxformat("MENU_LOAD_PDF"), intl::wxformat("MENU_LOAD_PDF_HINT"));
+    menuFile->AppendSubMenu(m_pdf_history_menu, intl::wxformat("MENU_RECENT_PDF"));
     menuFile->AppendSeparator();
-    menuFile->Append(MENU_CLOSE, "&Chiudi\tCtrl-W", "Chiudi la finestra");
-    menuBar->Append(menuFile, "&File");
+    menuFile->Append(MENU_CLOSE, intl::wxformat("MENU_CLOSE"), intl::wxformat("MENU_CLOSE_HINT"));
+    menuBar->Append(menuFile, intl::wxformat("MENU_FILE"));
 
     wxMenu *menuEdit = new wxMenu;
-    menuEdit->Append(MENU_UNDO, "&Annulla\tCtrl-Z", "Annulla l'ultima operazione");
-    menuEdit->Append(MENU_REDO, "&Ripeti\tCtrl-Y", "Ripeti l'ultima operazione");
+    menuEdit->Append(MENU_UNDO, intl::wxformat("MENU_UNDO"), intl::wxformat("MENU_UNDO_HINT"));
+    menuEdit->Append(MENU_REDO, intl::wxformat("MENU_REDO"), intl::wxformat("MENU_REDO_HINT"));
     menuEdit->AppendSeparator();
-    menuEdit->Append(MENU_CUT, "&Taglia\tCtrl-X", "Taglia la selezione");
-    menuEdit->Append(MENU_COPY, "&Copia\tCtrl-C", "Copia la selezione");
-    menuEdit->Append(MENU_PASTE, "&Incolla\tCtrl-V", "Incolla nella selezione");
+    menuEdit->Append(MENU_CUT, intl::wxformat("MENU_CUT"), intl::wxformat("MENU_CUT_HINT"));
+    menuEdit->Append(MENU_COPY, intl::wxformat("MENU_COPY"), intl::wxformat("MENU_COPY_HINT"));
+    menuEdit->Append(MENU_PASTE, intl::wxformat("MENU_PASTE"), intl::wxformat("MENU_PASTE_HINT"));
     menuEdit->AppendSeparator();
-    menuEdit->Append(MENU_DELETE, "&Cancella Selezione\tDel", "Cancella il rettangolo selezionato");
-    menuBar->Append(menuEdit, "&Modifica");
+    menuEdit->Append(MENU_DELETE, intl::wxformat("MENU_DELETE"), intl::wxformat("MENU_DELETE_HINT"));
+    menuBar->Append(menuEdit, intl::wxformat("MENU_EDIT"));
 
     wxMenu *menuEditor = new wxMenu;
-    menuEditor->Append(MENU_EDITCONTROL, "Modifica &script di controllo");
+    menuEditor->Append(MENU_EDITCONTROL, intl::wxformat("MENU_EDITCONTROL"));
 
-    menuBar->Append(menuEditor, "&Editor");
+    menuBar->Append(menuEditor, intl::wxformat("MENU_EDITOR"));
 
     SetMenuBar(menuBar);
 
     wxToolBar *toolbar_top = CreateToolBar();
 
-    toolbar_top->AddTool(MENU_NEW, "Nuovo", wxArtProvider::GetBitmap(wxART_NEW), "Nuovo");
-    toolbar_top->AddTool(MENU_OPEN, "Apri", wxArtProvider::GetBitmap(wxART_FILE_OPEN), "Apri");
-    toolbar_top->AddTool(MENU_SAVE, "Salva", wxArtProvider::GetBitmap(wxART_FILE_SAVE), "Salva");
+    toolbar_top->AddTool(MENU_NEW, intl::wxformat("TOOL_NEW"), wxArtProvider::GetBitmap(wxART_NEW), intl::wxformat("TOOL_NEW"));
+    toolbar_top->AddTool(MENU_OPEN, intl::wxformat("TOOL_OPEN"), wxArtProvider::GetBitmap(wxART_FILE_OPEN), intl::wxformat("TOOL_OPEN"));
+    toolbar_top->AddTool(MENU_SAVE, intl::wxformat("TOOL_SAVE"), wxArtProvider::GetBitmap(wxART_FILE_SAVE), intl::wxformat("TOOL_SAVE"));
 
     toolbar_top->AddSeparator();
 
-    toolbar_top->AddTool(MENU_UNDO, "Annulla", wxArtProvider::GetBitmap(wxART_UNDO), "Annulla");
-    toolbar_top->AddTool(MENU_REDO, "Ripeti", wxArtProvider::GetBitmap(wxART_REDO), "Ripeti");
+    toolbar_top->AddTool(MENU_UNDO, intl::wxformat("TOOL_UNDO"), wxArtProvider::GetBitmap(wxART_UNDO), intl::wxformat("TOOL_UNDO"));
+    toolbar_top->AddTool(MENU_REDO, intl::wxformat("TOOL_REDO"), wxArtProvider::GetBitmap(wxART_REDO), intl::wxformat("TOOL_REDO"));
 
     toolbar_top->AddSeparator();
 
-    toolbar_top->AddTool(MENU_CUT, "Taglia", wxArtProvider::GetBitmap(wxART_CUT), "Taglia");
-    toolbar_top->AddTool(MENU_COPY, "Copia", wxArtProvider::GetBitmap(wxART_COPY), "Copia");
-    toolbar_top->AddTool(MENU_PASTE, "Incolla", wxArtProvider::GetBitmap(wxART_PASTE), "Incolla");
+    toolbar_top->AddTool(MENU_CUT, intl::wxformat("TOOL_CUT"), wxArtProvider::GetBitmap(wxART_CUT), intl::wxformat("TOOL_CUT"));
+    toolbar_top->AddTool(MENU_COPY, intl::wxformat("TOOL_COPY"), wxArtProvider::GetBitmap(wxART_COPY), intl::wxformat("TOOL_COPY"));
+    toolbar_top->AddTool(MENU_PASTE, intl::wxformat("TOOL_PASTE"), wxArtProvider::GetBitmap(wxART_PASTE), intl::wxformat("TOOL_PASTE"));
 
     toolbar_top->AddSeparator();
 
-    toolbar_top->AddTool(CTL_LOAD_PDF, "Carica PDF", loadPNG(tool_load_pdf_png), "Carica PDF");
-    toolbar_top->AddTool(CTL_AUTO_LAYOUT, "Auto Layout", loadPNG(tool_auto_layout_png), "Auto Layout");
-    toolbar_top->AddTool(MENU_READDATA, "Avvia Lettura", wxArtProvider::GetBitmap(wxART_REPORT_VIEW), "Avvia Lettura");
-    toolbar_top->AddTool(MENU_OPEN_LAYOUT_OPTIONS, "Opzioni Layout", loadPNG(tool_settings_png), "Opzioni Layout");
+    toolbar_top->AddTool(CTL_LOAD_PDF, intl::wxformat("TOOL_LOAD_PDF"), loadPNG(tool_load_pdf_png), intl::wxformat("TOOL_LOAD_PDF"));
+    toolbar_top->AddTool(CTL_AUTO_LAYOUT, intl::wxformat("TOOL_AUTO_LAYOUT"), loadPNG(tool_auto_layout_png), intl::wxformat("TOOL_AUTO_LAYOUT"));
+    toolbar_top->AddTool(MENU_READDATA, intl::wxformat("TOOL_READDATA"), wxArtProvider::GetBitmap(wxART_REPORT_VIEW), intl::wxformat("TOOL_READDATA"));
+    toolbar_top->AddTool(MENU_OPEN_LAYOUT_OPTIONS, intl::wxformat("TOOL_LAYOUT_OPTIONS"), loadPNG(tool_settings_png), intl::wxformat("TOOL_LAYOUT_OPTIONS"));
 
     toolbar_top->AddStretchableSpace();
     
-    toolbar_top->AddTool(CTL_ROTATE, "Ruota Immagine", loadPNG(tool_rotate_png), "Ruota Immagine");
+    toolbar_top->AddTool(CTL_ROTATE, intl::wxformat("TOOL_ROTATE"), loadPNG(tool_rotate_png), intl::wxformat("TOOL_ROTATE"));
 
     m_page = new PageCtrl(toolbar_top, CTL_PAGE);
-    toolbar_top->AddControl(m_page, "Pagina");
+    toolbar_top->AddControl(m_page, intl::wxformat("TOOL_PAGE"));
 
     m_scale = new wxSlider(toolbar_top, CTL_SCALE, 50, 1, 100, wxDefaultPosition, wxSize(150, -1));
-    toolbar_top->AddControl(m_scale, "Scala");
+    toolbar_top->AddControl(m_scale, intl::wxformat("TOOL_SCALE"));
 
     toolbar_top->Realize();
 
@@ -176,17 +176,17 @@ frame_editor::frame_editor() : wxFrame(nullptr, wxID_ANY, "Layout Bolletta", wxD
 
     wxToolBar *toolbar_side = new wxToolBar(m_panel_left, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_VERTICAL);
 
-    toolbar_side->AddRadioTool(TOOL_SELECT, "Seleziona", loadPNG(tool_select_png), wxNullBitmap, "Seleziona");
-    toolbar_side->AddRadioTool(TOOL_NEWBOX, "Nuovo rettangolo", loadPNG(tool_newbox_png), wxNullBitmap, "Nuovo rettangolo");
-    toolbar_side->AddRadioTool(TOOL_DELETEBOX, "Cancella rettangolo", loadPNG(tool_deletebox_png), wxNullBitmap, "Cancella rettangolo");
-    toolbar_side->AddRadioTool(TOOL_RESIZE, "Ridimensiona rettangolo", loadPNG(tool_resize_png), wxNullBitmap, "Ridimensiona rettangolo");
-    toolbar_side->AddRadioTool(TOOL_TEST, "Test rettangolo", loadPNG(tool_test_png), wxNullBitmap, "Test rettangolo");
-    toolbar_side->AddRadioTool(TOOL_MOVEPAGE, "Sposta tra pagine", loadPNG(tool_move_page_png), wxNullBitmap, "Sposta tra pagine");
+    toolbar_side->AddRadioTool(TOOL_SELECT, intl::wxformat("TOOL_SELECT"), loadPNG(tool_select_png), wxNullBitmap, intl::wxformat("TOOL_SELECT"));
+    toolbar_side->AddRadioTool(TOOL_NEWBOX, intl::wxformat("TOOL_NEWBOX"), loadPNG(tool_newbox_png), wxNullBitmap, intl::wxformat("TOOL_NEWBOX"));
+    toolbar_side->AddRadioTool(TOOL_DELETEBOX, intl::wxformat("TOOL_DELETEBOX"), loadPNG(tool_deletebox_png), wxNullBitmap, intl::wxformat("TOOL_DELETEBOX"));
+    toolbar_side->AddRadioTool(TOOL_RESIZE, intl::wxformat("TOOL_RESIZE"), loadPNG(tool_resize_png), wxNullBitmap, intl::wxformat("TOOL_RESIZE"));
+    toolbar_side->AddRadioTool(TOOL_TEST, intl::wxformat("TOOL_TEST"), loadPNG(tool_test_png), wxNullBitmap, intl::wxformat("TOOL_TEST"));
+    toolbar_side->AddRadioTool(TOOL_MOVEPAGE, intl::wxformat("TOOL_MOVEPAGE"), loadPNG(tool_move_page_png), wxNullBitmap, intl::wxformat("TOOL_MOVEPAGE"));
 
     toolbar_side->AddSeparator();
 
-    toolbar_side->AddTool(TOOL_MOVEUP, "Muovi su", wxArtProvider::GetBitmap(wxART_GO_UP), "Muovi su");
-    toolbar_side->AddTool(TOOL_MOVEDOWN, L"Muovi giù", wxArtProvider::GetBitmap(wxART_GO_DOWN), L"Muovi giù");
+    toolbar_side->AddTool(TOOL_MOVEUP, intl::wxformat("TOOL_MOVEUP"), wxArtProvider::GetBitmap(wxART_GO_UP), intl::wxformat("TOOL_MOVEUP"));
+    toolbar_side->AddTool(TOOL_MOVEDOWN, intl::wxformat("TOOL_MOVEDOWN"), wxArtProvider::GetBitmap(wxART_GO_DOWN), intl::wxformat("TOOL_MOVEDOWN"));
 
     toolbar_side->Realize();
     sizer->Add(toolbar_side, wxSizerFlags().Expand());
@@ -228,14 +228,14 @@ void frame_editor::openFile(const wxString &filename) {
             m_config->SetPath("/");
         }
     } catch (const layout_error &error) {
-        wxMessageBox("Impossibile aprire questo file", "Errore", wxOK | wxICON_ERROR);
+        wxMessageBox(intl::wxformat("COULD_NOT_OPEN_FILE", filename.ToStdString()), intl::wxformat("PROGRAM_NAME"), wxOK | wxICON_ERROR);
     }
 }
 
 bool frame_editor::save(bool saveAs) {
     if (m_filename.empty() || saveAs) {
         wxString lastLayoutDir = m_config->Read("LastLayoutDir");
-        wxFileDialog diag(this, "Salva Layout Bolletta", lastLayoutDir, m_filename.string(), "File layout (*.bls)|*.bls|Tutti i file (*.*)|*.*", wxFD_SAVE);
+        wxFileDialog diag(this, intl::wxformat("SAVE_LAYOUT_DIALOG"), lastLayoutDir, m_filename.string(), intl::wxformat("OPEN_LAYOUT_DIALOG_OPTIONS"), wxFD_SAVE);
 
         if (diag.ShowModal() == wxID_CANCEL)
             return false;
@@ -246,7 +246,7 @@ bool frame_editor::save(bool saveAs) {
     try {
         layout.save_file(m_filename);
     } catch (const layout_error &error) {
-        wxMessageBox(error.what(), "Errore", wxICON_ERROR);
+        wxMessageBox(error.what(), intl::wxformat("PROGRAM_NAME"), wxICON_ERROR);
         return false;
     }
     modified = false;
@@ -255,7 +255,7 @@ bool frame_editor::save(bool saveAs) {
 
 bool frame_editor::saveIfModified() {
     if (modified) {
-        wxMessageDialog dialog(this, "Salvare le modifiche?", "Layout Bolletta", wxYES_NO | wxCANCEL | wxICON_WARNING);
+        wxMessageDialog dialog(this, intl::wxformat("SAVE_CHANGES_DIALOG"), intl::wxformat("PROGRAM_NAME"), wxYES_NO | wxCANCEL | wxICON_WARNING);
 
         switch (dialog.ShowModal()) {
         case wxID_YES:
@@ -273,7 +273,7 @@ void frame_editor::updateLayout(bool addToHistory) {
     m_list_boxes->Clear();
     for (auto &box : layout) {
         if (box.name.empty()) {
-            m_list_boxes->Append("(Senza nome)");
+            m_list_boxes->Append(intl::wxformat("UNNAMED_BOX"));
         } else {
             m_list_boxes->Append(box.name);
         }
@@ -307,14 +307,14 @@ void frame_editor::loadPdf(const wxString &filename) {
         m_pdf_history->Save(*m_config);
         m_config->SetPath("/");
     } catch (const pdf_error &error) {
-        wxMessageBox(error.what(), "Errore", wxICON_ERROR);
+        wxMessageBox(error.what(), intl::wxformat("PROGRAM_NAME"), wxICON_ERROR);
     }
 }
 
 wxString frame_editor::getControlScript(bool open_dialog) {
     wxString filename = m_config->Read("ControlScriptFilename");
     if (filename.empty() || open_dialog) {
-        wxFileDialog diag(this, "Apri script di controllo", wxFileName(filename).GetPath(), wxEmptyString, "File bls (*.bls)|*.bls|Tutti i file (*.*)|*.*");
+        wxFileDialog diag(this, intl::wxformat("OPEN_CONTROL_SCRIPT_DIALOG"), wxFileName(filename).GetPath(), wxEmptyString, intl::wxformat("OPEN_LAYOUT_DIALOG_OPTIONS"));
 
         if (diag.ShowModal() == wxID_OK) {
             filename = diag.GetPath();

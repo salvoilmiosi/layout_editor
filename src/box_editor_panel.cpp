@@ -17,7 +17,7 @@ BEGIN_EVENT_TABLE(box_editor_panel, wxImagePanel)
 END_EVENT_TABLE()
 
 box_editor_panel::box_editor_panel(wxWindow *parent, frame_editor *app) : wxImagePanel(parent), app(app) {
-    info_dialog = new TextDialog(this, "Test Lettura Rettangolo");
+    info_dialog = new TextDialog(this, intl::wxformat("TEST_OUTPUT"));
 }
 
 static void clamp_rect(pdf_rect &rect) {
@@ -204,7 +204,7 @@ void box_editor_panel::OnMouseUp(wxMouseEvent &evt) {
             }
             case TOOL_TEST: {
                 static auto choices = []<size_t ... Is> (std::index_sequence<Is...>) {
-                    wxString strings[] = {std::get<const char *>(enums::get_data(static_cast<read_mode>(Is))) ... };
+                    wxString strings[] = {enums::get_label(static_cast<read_mode>(Is)) ... };
                     return wxArrayString(sizeof(strings) / sizeof(wxString), strings);
                 } (std::make_index_sequence<enums::size<read_mode>()>{});
                 wxSingleChoiceDialog diag(this, L"Modalità di lettura:", "Test Lettura Rettangolo", choices);

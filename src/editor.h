@@ -13,6 +13,7 @@
 #include "page_ctl.h"
 
 #include "layout.h"
+#include "wxformat.h"
 
 #include <deque>
 

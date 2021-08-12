@@ -34,26 +34,26 @@ DECLARE_RESOURCE(tool_reload_png)
 DECLARE_RESOURCE(tool_abort_png)
 
 output_dialog::output_dialog(frame_editor *parent) :
-    wxDialog(parent, wxID_ANY, "Lettura Dati", wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER),
+    wxDialog(parent, wxID_ANY, intl::wxformat("READER_DATA_OUTPUT"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER),
     parent(parent)
 {
     wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 
     m_toolbar = new wxToolBar(this, wxID_ANY);
 
-    m_toolbar->AddTool(TOOL_UPDATE, "Aggiorna", loadPNG(tool_reload_png));
+    m_toolbar->AddTool(TOOL_UPDATE, intl::wxformat("TOOL_UPDATE"), loadPNG(tool_reload_png), intl::wxformat("TOOL_UPDATE"));
 
     m_toolbar->AddStretchableSpace();
 
-    m_show_debug = new wxCheckBox(m_toolbar, CTL_DEBUG, "Debug");
-    m_toolbar->AddControl(m_show_debug, "Debug");
+    m_show_debug = new wxCheckBox(m_toolbar, CTL_DEBUG, intl::wxformat("CHECKBOX_DEBUG"));
+    m_toolbar->AddControl(m_show_debug, intl::wxformat("CHECKBOX_DEBUG"));
 
-    m_show_globals = new wxCheckBox(m_toolbar, CTL_GLOBALS, "Globali");
-    m_toolbar->AddControl(m_show_globals, "Globali");
+    m_show_globals = new wxCheckBox(m_toolbar, CTL_GLOBALS, intl::wxformat("CHECKBOX_GLOBALS"));
+    m_toolbar->AddControl(m_show_globals, intl::wxformat("CHECKBOX_GLOBALS"));
 
     m_page = new PageCtrl(m_toolbar, CTL_OUTPUT_PAGE);
 
-    m_toolbar->AddControl(m_page, "Pagina");
+    m_toolbar->AddControl(m_page, intl::wxformat("TABLE_PAGE"));
 
     m_toolbar->Realize();
     sizer->Add(m_toolbar, wxSizerFlags().Expand());
@@ -64,7 +64,7 @@ output_dialog::output_dialog(frame_editor *parent) :
 
     SetSizerAndFit(sizer);
 
-    error_dialog = new TextDialog(this, "Errore di Layout");
+    error_dialog = new TextDialog(this, intl::wxformat("LAYOUT_ERROR"));
 }
 
 void output_dialog::OnClickUpdate(wxCommandEvent &) {
@@ -141,11 +141,11 @@ void output_dialog::OnLayoutError(wxCommandEvent &evt) {
 
     int errcode = evt.GetInt();
     if (errcode == 0) {
-        error_dialog->SetTitle("Note");
+        error_dialog->SetTitle(intl::wxformat("LAYOUT_NOTES"));
     } else if (errcode == -1) {
-        error_dialog->SetTitle("Errore Fatale");
+        error_dialog->SetTitle(intl::wxformat("LAYOUT_FATAL_ERROR"));
     } else {
-        error_dialog->SetTitle(wxString::Format("Errore di Layout (Codice %d)", errcode));
+        error_dialog->SetTitle(intl::wxformat("LAYOUT_ERROR_CODE", errcode));
     }
     error_dialog->ShowText(evt.GetString());
 }
@@ -164,8 +164,8 @@ void output_dialog::OnUpdate(wxCommandEvent &evt) {
 void output_dialog::updateItems() {
     m_list_ctrl->ClearAll();
 
-    auto col_name = m_list_ctrl->AppendColumn("Nome", wxLIST_FORMAT_LEFT, 150);
-    auto col_value = m_list_ctrl->AppendColumn("Valore", wxLIST_FORMAT_LEFT, 150);
+    auto col_name = m_list_ctrl->AppendColumn(intl::wxformat("VARIABLE_NAME"), wxLIST_FORMAT_LEFT, 150);
+    auto col_value = m_list_ctrl->AppendColumn(intl::wxformat("VARIABLE_VALUE"), wxLIST_FORMAT_LEFT, 150);
 
     auto display_table = [&](const variable_map &table) {
         size_t n=0;

@@ -16,13 +16,13 @@ BEGIN_EVENT_TABLE(MovePageDialog, wxDialog)
 END_EVENT_TABLE()
 
 MovePageDialog::MovePageDialog(frame_editor *app, bls::layout_box *box)
-    : wxDialog(app, wxID_ANY, "Cambia pagina di rettangolo"), m_app(app), m_box(box)
+    : wxDialog(app, wxID_ANY, intl::wxformat("CHANGE_BOX_PAGE")), m_app(app), m_box(box)
 {
     origpage = m_box->page;
 
     wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 
-    sizer->Add(new wxStaticText(this, wxID_ANY, "Pagina di rettangolo:"), wxSizerFlags().Center().Border(wxALL, 5));
+    sizer->Add(new wxStaticText(this, wxID_ANY, intl::wxformat("BOX_PAGE_LABEL")), wxSizerFlags().Center().Border(wxALL, 5));
 
     m_page = new PageCtrl(this, CTL_PAGE, app->getPdfDocument().num_pages());
     m_page->SetValue(app->getSelectedPage());
@@ -32,8 +32,8 @@ MovePageDialog::MovePageDialog(frame_editor *app, bls::layout_box *box)
 
     wxBoxSizer *okcancel = new wxBoxSizer(wxHORIZONTAL);
 
-    okcancel->Add(new wxButton(this, wxID_OK, "OK"), wxSizerFlags().Center().Border(wxALL, 5));
-    okcancel->Add(new wxButton(this, wxID_CANCEL, "Annulla"), wxSizerFlags().Center().Border(wxALL, 5));
+    okcancel->Add(new wxButton(this, wxID_OK, intl::wxformat("OK")), wxSizerFlags().Center().Border(wxALL, 5));
+    okcancel->Add(new wxButton(this, wxID_CANCEL, intl::wxformat("Cancel")), wxSizerFlags().Center().Border(wxALL, 5));
 
     sizer->Add(okcancel, wxSizerFlags().Center().Border(wxALL, 5));
     SetSizerAndFit(sizer);

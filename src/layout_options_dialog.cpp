@@ -4,15 +4,17 @@
 #include <wx/button.h>
 #include <wx/msgdlg.h>
 
+#include "wxformat.h"
+
 BEGIN_EVENT_TABLE(LayoutOptionsDialog, wxDialog)
     EVT_BUTTON(wxID_OK, LayoutOptionsDialog::OnOK)
 END_EVENT_TABLE()
 
 LayoutOptionsDialog::LayoutOptionsDialog(wxWindow *parent, layout_box_list *layout) :
-    wxDialog(parent, wxID_ANY, "Cambia Opzioni Di Layout", wxDefaultPosition, wxSize(400, 500)),
+    wxDialog(parent, wxID_ANY, intl::wxformat("LAYOUT_OPTIONS_DIALOG_TITLE"), wxDefaultPosition, wxSize(400, 500)),
     m_layout(layout)
 {
-    m_setlayout_box = new wxCheckBox(this, wxID_ANY, "Carica in Auto Layout");
+    m_setlayout_box = new wxCheckBox(this, wxID_ANY, intl::wxformat("LOAD_ON_AUTOLAYOUT"));
     m_setlayout_box->SetValue(m_layout->setlayout);
 
     wxBoxSizer *top_level = new wxBoxSizer(wxVERTICAL);
@@ -22,7 +24,7 @@ LayoutOptionsDialog::LayoutOptionsDialog(wxWindow *parent, layout_box_list *layo
     m_language_box = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
 
     auto *language_id_ptr = m_language_ids;
-    m_language_box->Append("Lingua di sistema");
+    m_language_box->Append(intl::wxformat("SYSTEM_LANGUAGE"));
     size_t selection = 0;
     for (int lang = 2; lang != wxLANGUAGE_USER_DEFINED; ++lang) {
         if (!wxLocale::IsAvailable(lang)) continue;
@@ -40,8 +42,8 @@ LayoutOptionsDialog::LayoutOptionsDialog(wxWindow *parent, layout_box_list *layo
 
     wxBoxSizer *ok_cancel_sizer = new wxBoxSizer(wxHORIZONTAL);
 
-    ok_cancel_sizer->Add(new wxButton(this, wxID_OK, "OK", wxDefaultPosition, wxSize(100, -1)), wxSizerFlags().Expand().Border(wxALL, 5));
-    ok_cancel_sizer->Add(new wxButton(this, wxID_CANCEL, "Annulla", wxDefaultPosition, wxSize(100, -1)), wxSizerFlags().Expand().Border(wxALL, 5));
+    ok_cancel_sizer->Add(new wxButton(this, wxID_OK, intl::wxformat("OK"), wxDefaultPosition, wxSize(100, -1)), wxSizerFlags().Expand().Border(wxALL, 5));
+    ok_cancel_sizer->Add(new wxButton(this, wxID_CANCEL, intl::wxformat("Cancel"), wxDefaultPosition, wxSize(100, -1)), wxSizerFlags().Expand().Border(wxALL, 5));
 
     top_level->Add(ok_cancel_sizer, wxSizerFlags().Center());
 

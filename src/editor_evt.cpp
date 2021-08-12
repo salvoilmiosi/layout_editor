@@ -26,7 +26,7 @@ void frame_editor::OnNewFile(wxCommandEvent &evt) {
 
 void frame_editor::OnOpenFile(wxCommandEvent &evt) {
     wxString lastLayoutDir = m_config->Read("LastLayoutDir");
-    wxFileDialog diag(this, "Apri Layout Bolletta", lastLayoutDir, wxEmptyString, "File layout (*.bls)|*.bls|Tutti i file (*.*)|*.*");
+    wxFileDialog diag(this, intl::wxformat("OPEN_LAYOUT_DIALOG"), lastLayoutDir, wxEmptyString, intl::wxformat("OPEN_LAYOUT_DIALOG_OPTIONS"));
 
     if (diag.ShowModal() == wxID_CANCEL)
         return;
@@ -142,12 +142,12 @@ void frame_editor::OnAutoLayout(wxCommandEvent &evt) {
 
         auto &layouts = my_reader.get_layouts();
         if (layouts.size() <= 1) {
-            wxMessageBox("Impossibile determinare il layout di questo file", "Errore", wxOK | wxICON_WARNING);
+            wxMessageBox(intl::wxformat("COULD_NOT_AUTOLAYOUT"), intl::wxformat("PROGRAM_NAME"), wxOK | wxICON_WARNING);
         } else if (saveIfModified()) {
             openFile(layouts.back().string());
         }
     } catch (const std::exception &error) {
-        wxMessageBox(error.what(), "Errore", wxICON_ERROR);
+        wxMessageBox(error.what(), intl::wxformat("PROGRAM_NAME"), wxICON_ERROR);
     }
 }
 
@@ -159,7 +159,7 @@ void frame_editor::OnRotate(wxCommandEvent &evt) {
 
 void frame_editor::OnLoadPdf(wxCommandEvent &evt) {
     wxString lastPdfDir = m_config->Read("LastPdfDir");
-    wxFileDialog diag(this, "Apri PDF", lastPdfDir, wxEmptyString, "File PDF (*.pdf)|*.pdf|Tutti i file (*.*)|*.*");
+    wxFileDialog diag(this, intl::wxformat("OPEN_PDF_DIALOG"), lastPdfDir, wxEmptyString, intl::wxformat("OPEN_PDF_DIALOG_OPTIONS"));
 
     if (diag.ShowModal() == wxID_CANCEL)
         return;
