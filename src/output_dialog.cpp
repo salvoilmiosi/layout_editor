@@ -12,7 +12,6 @@
 
 enum {
     CTL_DEBUG,
-    CTL_GLOBALS,
     CTL_OUTPUT_PAGE,
     TOOL_UPDATE,
     TOOL_ABORT,
@@ -23,9 +22,7 @@ wxDEFINE_EVENT(wxEVT_COMMAND_LAYOUT_ERROR, wxThreadEvent);
 
 BEGIN_EVENT_TABLE(output_dialog, wxDialog)
     EVT_MENU(TOOL_UPDATE, output_dialog::OnClickUpdate)
-    EVT_CHECKBOX(CTL_DEBUG, output_dialog::OnUpdate)
-    EVT_CHECKBOX(CTL_GLOBALS, output_dialog::OnUpdate)
-    EVT_COMMAND(CTL_OUTPUT_PAGE, EVT_PAGE_SELECTED, output_dialog::OnUpdate)
+    EVT_CHECKBOX(CTL_DEBUG, output_dialog::OnToggleShowDebug)
     EVT_COMMAND(wxID_ANY, wxEVT_COMMAND_READ_COMPLETE, output_dialog::OnReadCompleted)
     EVT_COMMAND(wxID_ANY, wxEVT_COMMAND_LAYOUT_ERROR, output_dialog::OnLayoutError)
 END_EVENT_TABLE()
@@ -43,24 +40,20 @@ output_dialog::output_dialog(frame_editor *parent) :
 
     m_toolbar->AddTool(TOOL_UPDATE, intl::wxformat("TOOL_UPDATE"), loadPNG(tool_reload_png), intl::wxformat("TOOL_UPDATE"));
 
-    m_toolbar->AddStretchableSpace();
-
-    m_show_debug = new wxCheckBox(m_toolbar, CTL_DEBUG, intl::wxformat("CHECKBOX_DEBUG"));
-    m_toolbar->AddControl(m_show_debug, intl::wxformat("CHECKBOX_DEBUG"));
-
-    m_show_globals = new wxCheckBox(m_toolbar, CTL_GLOBALS, intl::wxformat("CHECKBOX_GLOBALS"));
-    m_toolbar->AddControl(m_show_globals, intl::wxformat("CHECKBOX_GLOBALS"));
-
-    m_page = new PageCtrl(m_toolbar, CTL_OUTPUT_PAGE);
-
-    m_toolbar->AddControl(m_page, intl::wxformat("TABLE_PAGE"));
+    m_show_debug = new wxCheckBox(m_toolbar, CTL_DEBUG, intl::wxformat("SHOW_DEBUG_VARIABLES"));
+    m_toolbar->AddControl(m_show_debug, intl::wxformat("SHOW_DEBUG_VARIABLES"));
 
     m_toolbar->Realize();
     sizer->Add(m_toolbar, wxSizerFlags().Expand());
 
-    m_list_ctrl = new wxListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(320, 450), wxLC_REPORT);
+    m_display = new wxDataViewCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(320, 450));
+    m_display->AppendTextColumn(intl::wxformat("VARIABLE_NAME"), 0, wxDATAVIEW_CELL_INERT, 150, wxALIGN_LEFT);
+    m_display->AppendTextColumn(intl::wxformat("VARIABLE_VALUE"), 1, wxDATAVIEW_CELL_INERT, 150, wxALIGN_LEFT);
 
-    sizer->Add(m_list_ctrl, wxSizerFlags(1).Expand());
+    m_model = new VariableTableModel;
+    m_display->AssociateModel(m_model.get());
+
+    sizer->Add(m_display, wxSizerFlags(1).Expand());
 
     SetSizerAndFit(sizer);
 
@@ -121,6 +114,7 @@ void output_dialog::compileAndRead() {
         wxBell();
     } else {
         m_toolbar->SetToolNormalBitmap(TOOL_UPDATE, loadPNG(tool_abort_png));
+        m_model->ClearTables();
 
         m_reader.clear();
         m_reader.set_document(parent->getPdfDocument());
@@ -129,9 +123,6 @@ void output_dialog::compileAndRead() {
             delete m_thread;
             m_thread = nullptr;
         }
-
-        m_page->SetMaxPages(1);
-        m_list_ctrl->ClearAll();
     }
 }
 
@@ -151,39 +142,14 @@ void output_dialog::OnLayoutError(wxCommandEvent &evt) {
 
 void output_dialog::OnReadCompleted(wxCommandEvent &evt) {
     m_toolbar->SetToolNormalBitmap(TOOL_UPDATE, loadPNG(tool_reload_png));
-    m_page->SetMaxPages(m_reader.get_values().size());
-    updateItems();
-}
 
-void output_dialog::OnUpdate(wxCommandEvent &evt) {
-    if (m_thread) return;
-    updateItems();
-}
-
-void output_dialog::updateItems() {
-    m_list_ctrl->ClearAll();
-
-    auto col_name = m_list_ctrl->AppendColumn(intl::wxformat("VARIABLE_NAME"), wxLIST_FORMAT_LEFT, 150);
-    auto col_value = m_list_ctrl->AppendColumn(intl::wxformat("VARIABLE_VALUE"), wxLIST_FORMAT_LEFT, 150);
-
-    auto display_table = [&](const variable_map &table) {
-        size_t n=0;
-        for (const auto &[key, var] : table) {
-            if (!m_show_debug->GetValue() && key.front() == '_') {
-                continue;
-            }
-            wxListItem item;
-            item.SetId(n);
-            m_list_ctrl->InsertItem(item);
-            m_list_ctrl->SetItem(n, col_name, key);
-            m_list_ctrl->SetItem(n, col_value, util::to_wx(var.as_view()));
-            ++n;
-        }
-    };
-
-    if (m_show_globals->GetValue()) {
-        display_table(m_reader.get_globals());
-    } else {
-        display_table(*std::next(m_reader.get_values().begin(), m_page->GetValue() - 1));
+    m_model->AddTable(intl::wxformat("TABLE_GLOBAL"), m_reader.get_globals());
+    int i=1;
+    for (const variable_map &table : m_reader.get_values()) {
+        m_model->AddTable(intl::wxformat("TABLE_NUMBER", i++), table);
     }
+}
+
+void output_dialog::OnToggleShowDebug(wxCommandEvent &evt) {
+    m_model->SetShowDebug(m_show_debug->GetValue());
 }

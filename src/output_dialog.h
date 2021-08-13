@@ -3,12 +3,13 @@
 
 #include <wx/dialog.h>
 #include <wx/combobox.h>
-#include <wx/listctrl.h>
 #include <wx/thread.h>
 
 #include "editor.h"
 #include "reader.h"
 #include "text_dialog.h"
+
+#include "variable_table_model.h"
 
 using namespace bls;
 
@@ -37,25 +38,23 @@ public:
 private:
     frame_editor *parent;
 
-    wxCheckBox *m_show_globals;
     wxCheckBox *m_show_debug;
-    PageCtrl *m_page;
-    wxListCtrl *m_list_ctrl;
     wxToolBar *m_toolbar;
+
+    wxDataViewCtrl *m_display;
+    wxObjectDataPtr<VariableTableModel> m_model;
 
     reader_thread *m_thread = nullptr;
     reader m_reader;
     
     TextDialog *error_dialog;
 
-    void OnUpdate(wxCommandEvent &evt);
+    void OnToggleShowDebug(wxCommandEvent &evt);
 
     void OnClickUpdate(wxCommandEvent &evt);
 
     void OnReadCompleted(wxCommandEvent &evt);
     void OnLayoutError(wxCommandEvent &evt);
-
-    void updateItems();
 
     DECLARE_EVENT_TABLE()
 
