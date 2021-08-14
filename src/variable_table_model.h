@@ -48,6 +48,14 @@ public:
         const VariableTableModelNode &node = m_root.emplace_back(nullptr, name, table);
 
         ItemAdded(wxDataViewItem(nullptr), wxDataViewItem((void *) &node));
+
+        wxDataViewItemArray items;
+        for (const VariableTableModelNode &child : node.children) {
+            if (m_show_debug || ! child.IsDebug()) {
+                items.Add(wxDataViewItem((void *) &child));
+            }
+        }
+        ItemsAdded(wxDataViewItem((void *)&node), items);
     }
 
     void ClearTables() {
