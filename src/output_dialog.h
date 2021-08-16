@@ -38,7 +38,6 @@ public:
 private:
     frame_editor *parent;
 
-    wxCheckBox *m_show_debug;
     wxToolBar *m_toolbar;
 
     wxDataViewCtrl *m_display;
@@ -48,8 +47,6 @@ private:
     reader m_reader;
     
     TextDialog *error_dialog;
-
-    void OnToggleShowDebug(wxCommandEvent &evt);
 
     void OnClickUpdate(wxCommandEvent &evt);
 

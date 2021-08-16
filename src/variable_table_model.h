@@ -32,30 +32,17 @@ struct VariableTableModelNode {
             children.emplace_back(this, util::to_wx(key), val);
         }
     }
-
-    bool IsDebug() const {
-        return name.empty() ? false : name[0] == '_';
-    }
 };
 
 class VariableTableModel : public wxDataViewModel {
 private:
     std::list<VariableTableModelNode> m_root;
-    bool m_show_debug = false;
 
 public:
     void AddTable(const wxString &name, const variable_map &table) {
         const VariableTableModelNode &node = m_root.emplace_back(nullptr, name, table);
 
         ItemAdded(wxDataViewItem(nullptr), wxDataViewItem((void *) &node));
-
-        wxDataViewItemArray items;
-        for (const VariableTableModelNode &child : node.children) {
-            if (m_show_debug || ! child.IsDebug()) {
-                items.Add(wxDataViewItem((void *) &child));
-            }
-        }
-        ItemsAdded(wxDataViewItem((void *)&node), items);
     }
 
     void ClearTables() {
@@ -64,34 +51,14 @@ public:
         Cleared();
     }
 
-    void SetShowDebug(bool show_debug) {
-        if (show_debug == m_show_debug) return;
-        m_show_debug = show_debug;
-        for (const VariableTableModelNode &node : m_root) {
-            wxDataViewItemArray items;
-            for (const VariableTableModelNode &child : node.children) {
-                if (child.IsDebug()) {
-                    items.Add(wxDataViewItem((void *) &child));
-                }
-            }
-            if (m_show_debug) {
-                ItemsAdded(wxDataViewItem((void *)&node), items);
-            } else {
-                ItemsDeleted(wxDataViewItem((void *)&node), items);
-            }
-        }
-    }
-
     virtual unsigned int GetChildren(const wxDataViewItem &item, wxDataViewItemArray &children) const override {
         VariableTableModelNode *node = (VariableTableModelNode *) item.GetID();
 
         const std::list<VariableTableModelNode> *list = node ? &node->children : &m_root;
         size_t count = 0;
         for (const VariableTableModelNode &c : *list) {
-            if (m_show_debug || ! c.IsDebug()) {
-                children.Add(wxDataViewItem((void *) &c));
-                ++count;
-            }
+            children.Add(wxDataViewItem((void *) &c));
+            ++count;
         }
         return count;
     }

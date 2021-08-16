@@ -22,7 +22,6 @@ wxDEFINE_EVENT(wxEVT_COMMAND_LAYOUT_ERROR, wxThreadEvent);
 
 BEGIN_EVENT_TABLE(output_dialog, wxDialog)
     EVT_MENU(TOOL_UPDATE, output_dialog::OnClickUpdate)
-    EVT_CHECKBOX(CTL_DEBUG, output_dialog::OnToggleShowDebug)
     EVT_COMMAND(wxID_ANY, wxEVT_COMMAND_READ_COMPLETE, output_dialog::OnReadCompleted)
     EVT_COMMAND(wxID_ANY, wxEVT_COMMAND_LAYOUT_ERROR, output_dialog::OnLayoutError)
 END_EVENT_TABLE()
@@ -39,9 +38,6 @@ output_dialog::output_dialog(frame_editor *parent) :
     m_toolbar = new wxToolBar(this, wxID_ANY);
 
     m_toolbar->AddTool(TOOL_UPDATE, intl::wxformat("TOOL_UPDATE"), loadPNG(tool_reload_png), intl::wxformat("TOOL_UPDATE"));
-
-    m_show_debug = new wxCheckBox(m_toolbar, CTL_DEBUG, intl::wxformat("SHOW_DEBUG_VARIABLES"));
-    m_toolbar->AddControl(m_show_debug, intl::wxformat("SHOW_DEBUG_VARIABLES"));
 
     m_toolbar->Realize();
     sizer->Add(m_toolbar, wxSizerFlags().Expand());
@@ -143,13 +139,8 @@ void output_dialog::OnLayoutError(wxCommandEvent &evt) {
 void output_dialog::OnReadCompleted(wxCommandEvent &evt) {
     m_toolbar->SetToolNormalBitmap(TOOL_UPDATE, loadPNG(tool_reload_png));
 
-    m_model->AddTable(intl::wxformat("TABLE_GLOBAL"), m_reader.get_globals());
     int i=1;
     for (const variable_map &table : m_reader.get_values()) {
         m_model->AddTable(intl::wxformat("TABLE_NUMBER", i++), table);
     }
-}
-
-void output_dialog::OnToggleShowDebug(wxCommandEvent &evt) {
-    m_model->SetShowDebug(m_show_debug->GetValue());
 }
