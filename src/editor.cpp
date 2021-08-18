@@ -228,7 +228,7 @@ void frame_editor::openFile(const wxString &filename) {
             m_config->SetPath("/");
         }
     } catch (const layout_error &error) {
-        wxMessageBox(intl::wxformat("COULD_NOT_OPEN_FILE", filename.ToStdString()), intl::wxformat("PROGRAM_NAME"), wxOK | wxICON_ERROR);
+        wxMessageBox(intl::wxformat("CANT_OPEN_FILE", filename.ToStdString()), intl::wxformat("PROGRAM_NAME"), wxOK | wxICON_ERROR);
     }
 }
 

@@ -143,7 +143,7 @@ void frame_editor::OnAutoLayout(wxCommandEvent &evt) {
 
         auto &layouts = my_reader.get_layouts();
         if (layouts.size() <= 1) {
-            wxMessageBox(intl::wxformat("COULD_NOT_AUTOLAYOUT"), intl::wxformat("PROGRAM_NAME"), wxOK | wxICON_WARNING);
+            wxMessageBox(intl::wxformat("CANT_AUTOLAYOUT"), intl::wxformat("PROGRAM_NAME"), wxOK | wxICON_WARNING);
         } else if (saveIfModified()) {
             openFile(layouts.back().string());
         }
