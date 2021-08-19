@@ -227,7 +227,7 @@ void frame_editor::openFile(const wxString &filename) {
             m_bls_history->Save(*m_config);
             m_config->SetPath("/");
         }
-    } catch (const layout_error &error) {
+    } catch (const std::exception &error) {
         wxMessageBox(intl::wxformat("CANT_OPEN_FILE", filename.ToStdString()), intl::wxformat("PROGRAM_NAME"), wxOK | wxICON_ERROR);
     }
 }
@@ -246,7 +246,7 @@ bool frame_editor::save(bool saveAs) {
     }
     try {
         layout.save_file(m_filename);
-    } catch (const layout_error &error) {
+    } catch (const std::exception &error) {
         wxMessageBox(error.what(), intl::wxformat("PROGRAM_NAME"), wxICON_ERROR);
         return false;
     }
@@ -307,7 +307,7 @@ void frame_editor::loadPdf(const wxString &filename) {
         m_config->SetPath("/RecentPdfs");
         m_pdf_history->Save(*m_config);
         m_config->SetPath("/");
-    } catch (const pdf_error &error) {
+    } catch (const file_error &error) {
         wxMessageBox(error.what(), intl::wxformat("PROGRAM_NAME"), wxICON_ERROR);
     }
 }

@@ -89,7 +89,7 @@ wxThread::ExitCode reader_thread::Entry() {
             wxQueueEvent(parent, evt);
         }
         return (wxThread::ExitCode) 0;
-    } catch (const layout_runtime_error &error) {
+    } catch (const scripted_error &error) {
         auto *evt = new wxThreadEvent(wxEVT_COMMAND_LAYOUT_ERROR);
         evt->SetString(util::to_wx(error.what()));
         evt->SetInt(error.errcode);
