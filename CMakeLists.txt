@@ -31,7 +31,7 @@ resources/tool_reload.png
 resources/tool_abort.png
 resources/tool_rotate.png
 resources/tool_load_pdf.png
-resources/tool_auto_layout.png
+resources/tool_find_layout.png
 resources/tool_settings.png
 )
 

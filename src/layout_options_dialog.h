@@ -18,7 +18,7 @@ public:
 private:
     layout_box_list *m_layout;
 
-    wxCheckBox *m_setlayout_box;
+    wxCheckBox *m_find_layout_box;
 
     wxChoice *m_language_box;
 

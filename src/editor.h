@@ -65,7 +65,7 @@ private:
     void OnPaste        (wxCommandEvent &evt);
     void OpenControlScript (wxCommandEvent &evt);
     void OnOpenLayoutOptions (wxCommandEvent &evt);
-    void OnAutoLayout   (wxCommandEvent &evt);
+    void OnFindLayout   (wxCommandEvent &evt);
     void OnRotate       (wxCommandEvent &evt);
     void OnLoadPdf      (wxCommandEvent &evt);
     void OnPageSelect   (wxCommandEvent &evt);

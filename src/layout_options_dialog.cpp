@@ -14,12 +14,12 @@ LayoutOptionsDialog::LayoutOptionsDialog(wxWindow *parent, layout_box_list *layo
     wxDialog(parent, wxID_ANY, intl::wxformat("LAYOUT_OPTIONS_DIALOG_TITLE"), wxDefaultPosition, wxSize(400, 500)),
     m_layout(layout)
 {
-    m_setlayout_box = new wxCheckBox(this, wxID_ANY, intl::wxformat("LOAD_ON_AUTOLAYOUT"));
-    m_setlayout_box->SetValue(m_layout->setlayout);
+    m_find_layout_box = new wxCheckBox(this, wxID_ANY, intl::wxformat("FIND_LAYOUT_CHECKBOX"));
+    m_find_layout_box->SetValue(m_layout->find_layout_flag);
 
     wxBoxSizer *top_level = new wxBoxSizer(wxVERTICAL);
 
-    top_level->Add(m_setlayout_box, wxSizerFlags().Expand().Border(wxALL, 5));
+    top_level->Add(m_find_layout_box, wxSizerFlags().Expand().Border(wxALL, 5));
 
     m_language_box = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
 
@@ -51,7 +51,7 @@ LayoutOptionsDialog::LayoutOptionsDialog(wxWindow *parent, layout_box_list *layo
 }
 
 void LayoutOptionsDialog::OnOK(wxCommandEvent &evt) {
-    m_layout->setlayout = m_setlayout_box->GetValue();
+    m_layout->find_layout_flag = m_find_layout_box->GetValue();
     auto *data = m_language_box->GetClientData(m_language_box->GetSelection());
     if (data) {
         m_layout->language = *static_cast<std::string *>(data);

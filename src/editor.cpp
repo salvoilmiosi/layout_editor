@@ -24,7 +24,7 @@ enum {
     MENU_OPEN_PDF_RECENT,
     MENU_OPEN_PDF_RECENT_END = MENU_OPEN_PDF_RECENT + MAX_RECENT_PDFS_HISTORY,
 
-    CTL_ROTATE, CTL_LOAD_PDF, CTL_AUTO_LAYOUT, CTL_PAGE, CTL_SCALE,
+    CTL_ROTATE, CTL_LOAD_PDF, CTL_FIND_LAYOUT, CTL_PAGE, CTL_SCALE,
 
     TOOL_MOVEUP, TOOL_MOVEDOWN,
     
@@ -50,7 +50,7 @@ BEGIN_EVENT_TABLE(frame_editor, wxFrame)
     EVT_MENU (MENU_READDATA, frame_editor::OnReadData)
     EVT_MENU (MENU_EDITCONTROL, frame_editor::OpenControlScript)
     EVT_MENU (MENU_OPEN_LAYOUT_OPTIONS, frame_editor::OnOpenLayoutOptions)
-    EVT_TOOL (CTL_AUTO_LAYOUT, frame_editor::OnAutoLayout)
+    EVT_TOOL (CTL_FIND_LAYOUT, frame_editor::OnFindLayout)
     EVT_TOOL (CTL_ROTATE, frame_editor::OnRotate)
     EVT_TOOL (CTL_LOAD_PDF, frame_editor::OnLoadPdf)
     EVT_COMMAND(CTL_PAGE, EVT_PAGE_SELECTED, frame_editor::OnPageSelect)
@@ -78,7 +78,7 @@ DECLARE_RESOURCE(tool_test_png)
 DECLARE_RESOURCE(tool_move_page_png)
 DECLARE_RESOURCE(tool_rotate_png)
 DECLARE_RESOURCE(tool_load_pdf_png)
-DECLARE_RESOURCE(tool_auto_layout_png)
+DECLARE_RESOURCE(tool_find_layout_png)
 DECLARE_RESOURCE(tool_settings_png)
 
 constexpr size_t MAX_HISTORY_SIZE = 20;
@@ -153,7 +153,7 @@ frame_editor::frame_editor() : wxFrame(nullptr, wxID_ANY, intl::wxformat("PROGRA
     toolbar_top->AddSeparator();
 
     toolbar_top->AddTool(CTL_LOAD_PDF, intl::wxformat("TOOL_LOAD_PDF"), loadPNG(tool_load_pdf_png), intl::wxformat("TOOL_LOAD_PDF"));
-    toolbar_top->AddTool(CTL_AUTO_LAYOUT, intl::wxformat("TOOL_AUTO_LAYOUT"), loadPNG(tool_auto_layout_png), intl::wxformat("TOOL_AUTO_LAYOUT"));
+    toolbar_top->AddTool(CTL_FIND_LAYOUT, intl::wxformat("TOOL_FIND_LAYOUT"), loadPNG(tool_find_layout_png), intl::wxformat("TOOL_FIND_LAYOUT"));
     toolbar_top->AddTool(MENU_READDATA, intl::wxformat("TOOL_READDATA"), wxArtProvider::GetBitmap(wxART_REPORT_VIEW), intl::wxformat("TOOL_READDATA"));
     toolbar_top->AddTool(MENU_OPEN_LAYOUT_OPTIONS, intl::wxformat("TOOL_LAYOUT_OPTIONS"), loadPNG(tool_settings_png), intl::wxformat("TOOL_LAYOUT_OPTIONS"));
 

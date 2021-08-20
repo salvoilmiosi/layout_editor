@@ -129,7 +129,7 @@ void frame_editor::OnOpenLayoutOptions(wxCommandEvent &evt) {
     LayoutOptionsDialog(this, &layout).ShowModal();
 }
 
-void frame_editor::OnAutoLayout(wxCommandEvent &evt) {
+void frame_editor::OnFindLayout(wxCommandEvent &evt) {
     if (!m_doc.isopen()) {
         wxBell();
         return;
@@ -138,12 +138,12 @@ void frame_editor::OnAutoLayout(wxCommandEvent &evt) {
     try {
         reader my_reader(m_doc);
         my_reader.add_layout(getControlScript().ToStdString());
-        my_reader.add_flag(reader_flags::HALT_ON_SETLAYOUT);
+        my_reader.add_flag(reader_flags::FIND_LAYOUT);
         my_reader.start();
 
         auto &layouts = my_reader.get_layouts();
         if (layouts.size() <= 1) {
-            wxMessageBox(intl::wxformat("CANT_AUTOLAYOUT"), intl::wxformat("PROGRAM_NAME"), wxOK | wxICON_WARNING);
+            wxMessageBox(intl::wxformat("CANT_FIND_LAYOUT"), intl::wxformat("PROGRAM_NAME"), wxOK | wxICON_WARNING);
         } else if (saveIfModified()) {
             openFile(layouts.back().string());
         }
