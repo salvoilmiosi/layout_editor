@@ -74,11 +74,9 @@ reader_thread::~reader_thread() {
 
 wxThread::ExitCode reader_thread::Entry() {
     try {
-        parser my_parser;
         std::filesystem::path path = parent->parent->m_filename;
         if (path.empty()) path = std::filesystem::path(parent->parent->getControlScript().ToStdString());
-        my_parser.read_layout(path, m_layout);
-        m_reader.add_code(std::move(my_parser.get_code()));
+        m_reader.add_code(parser{}.read_layout(path, m_layout));
         m_reader.start();
         wxQueueEvent(parent, new wxThreadEvent(wxEVT_COMMAND_READ_COMPLETE));
 
