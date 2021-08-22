@@ -141,11 +141,8 @@ void frame_editor::OnFindLayout(wxCommandEvent &evt) {
         my_reader.add_flag(reader_flags::FIND_LAYOUT);
         my_reader.start();
 
-        auto &layouts = my_reader.get_layouts();
-        if (layouts.size() <= 1) {
-            wxMessageBox(intl::wxformat("CANT_FIND_LAYOUT"), intl::wxformat("PROGRAM_NAME"), wxOK | wxICON_WARNING);
-        } else if (saveIfModified()) {
-            openFile(layouts.back().string());
+        if (saveIfModified()) {
+            openFile(my_reader.get_current_layout().string());
         }
     } catch (const std::exception &error) {
         wxMessageBox(error.what(), intl::wxformat("PROGRAM_NAME"), wxICON_ERROR);
