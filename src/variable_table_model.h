@@ -38,11 +38,16 @@ class VariableTableModel : public wxDataViewModel {
 private:
     std::list<VariableTableModelNode> m_root;
 
+    void RecurseUpdateItems(const VariableTableModelNode &node) {
+        ItemAdded(wxDataViewItem((void *) node.parent), wxDataViewItem((void *) &node));
+        for (const VariableTableModelNode &child : node.children) {
+            RecurseUpdateItems(child);
+        }
+    }
+
 public:
     void AddTable(const wxString &name, const variable_map &table) {
-        const VariableTableModelNode &node = m_root.emplace_back(nullptr, name, table);
-
-        ItemAdded(wxDataViewItem(nullptr), wxDataViewItem((void *) &node));
+        RecurseUpdateItems(m_root.emplace_back(nullptr, name, table));
     }
 
     void ClearTables() {
