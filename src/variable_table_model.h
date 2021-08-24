@@ -8,14 +8,15 @@ struct VariableTableModelNode {
     VariableTableModelNode *parent = nullptr;
 
     wxString name;
+    wxString type;
     wxString value;
     std::list<VariableTableModelNode> children;
 
-    VariableTableModelNode(VariableTableModelNode *parent, const wxString &name, const wxString &value = wxEmptyString)
-        : parent(parent), name(name), value(value) {}
+    VariableTableModelNode(VariableTableModelNode *parent, const wxString &name, const wxString &type = wxEmptyString, const wxString &value = wxEmptyString)
+        : parent(parent), name(name), type(type), value(value) {}
 
     VariableTableModelNode(VariableTableModelNode *parent, const wxString &name, const variable &var)
-        : parent(parent), name(name), value(wxintl::to_wx(var.as_view()))
+        : parent(parent), name(name), type(wxintl::enum_label(var.type())), value(wxintl::to_wx(var.as_view()))
     {
         if (var.is_array()) {
             const auto &arr = var.as_array();
@@ -69,7 +70,7 @@ public:
     }
 
     virtual unsigned int GetColumnCount() const override {
-        return 2;
+        return 3;
     }
 
     virtual wxString GetColumnType(unsigned int col) const override {
@@ -89,7 +90,8 @@ public:
 
         switch (col) {
         case 0: variant = node->name; break;
-        case 1: variant = node->value; break;
+        case 1: variant = node->type; break;
+        case 2: variant = node->value; break;
         }
     }
 

@@ -42,9 +42,10 @@ output_dialog::output_dialog(frame_editor *parent) :
     m_toolbar->Realize();
     sizer->Add(m_toolbar, wxSizerFlags().Expand());
 
-    m_display = new wxDataViewCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(320, 450));
+    m_display = new wxDataViewCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(500, 500));
     m_display->AppendTextColumn(wxintl::translate("VARIABLE_NAME"), 0, wxDATAVIEW_CELL_INERT, 150, wxALIGN_LEFT);
-    m_display->AppendTextColumn(wxintl::translate("VARIABLE_VALUE"), 1, wxDATAVIEW_CELL_INERT, 150, wxALIGN_LEFT);
+    m_display->AppendTextColumn(wxintl::translate("VARIABLE_TYPE"), 1, wxDATAVIEW_CELL_INERT, 100, wxALIGN_LEFT);
+    m_display->AppendTextColumn(wxintl::translate("VARIABLE_VALUE"), 2, wxDATAVIEW_CELL_INERT, 150, wxALIGN_LEFT);
 
     m_model = new VariableTableModel;
     m_display->AssociateModel(m_model.get());
