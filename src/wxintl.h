@@ -16,9 +16,9 @@ namespace wxintl {
         return to_wx(intl::translate(std::forward<Ts>(args) ...));
     }
 
-    template<enums::is_enum T>
-    inline auto enum_label(T num) {
-        return translate(std::format("{}::{}", magic_enum::enum_type_name<T>(), magic_enum::enum_name(num)));
+    template<enums::is_enum E>
+    inline wxString enum_label(E value) {
+        return to_wx(intl::enum_label(value));
     }
 }
 
