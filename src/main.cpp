@@ -38,7 +38,7 @@ bool MainApp::OnInit() {
 
 void MainApp::OnInitCmdLine(wxCmdLineParser &parser) {
     parser.AddParam("input-bls", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL);
-    parser.AddOption("p", "input-pdf", intl::wxformat("PDF_INPUT_FILE"));
+    parser.AddOption("p", "input-pdf", wxintl::translate("PDF_INPUT_FILE"));
 }
 
 bool MainApp::OnCmdLineParsed(wxCmdLineParser &parser) {

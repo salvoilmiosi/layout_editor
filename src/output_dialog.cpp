@@ -30,21 +30,21 @@ DECLARE_RESOURCE(tool_reload_png)
 DECLARE_RESOURCE(tool_abort_png)
 
 output_dialog::output_dialog(frame_editor *parent) :
-    wxDialog(parent, wxID_ANY, intl::wxformat("READER_DATA_OUTPUT"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER),
+    wxDialog(parent, wxID_ANY, wxintl::translate("READER_DATA_OUTPUT"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER),
     parent(parent)
 {
     wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 
     m_toolbar = new wxToolBar(this, wxID_ANY);
 
-    m_toolbar->AddTool(TOOL_UPDATE, intl::wxformat("TOOL_UPDATE"), loadPNG(tool_reload_png), intl::wxformat("TOOL_UPDATE"));
+    m_toolbar->AddTool(TOOL_UPDATE, wxintl::translate("TOOL_UPDATE"), loadPNG(tool_reload_png), wxintl::translate("TOOL_UPDATE"));
 
     m_toolbar->Realize();
     sizer->Add(m_toolbar, wxSizerFlags().Expand());
 
     m_display = new wxDataViewCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(320, 450));
-    m_display->AppendTextColumn(intl::wxformat("VARIABLE_NAME"), 0, wxDATAVIEW_CELL_INERT, 150, wxALIGN_LEFT);
-    m_display->AppendTextColumn(intl::wxformat("VARIABLE_VALUE"), 1, wxDATAVIEW_CELL_INERT, 150, wxALIGN_LEFT);
+    m_display->AppendTextColumn(wxintl::translate("VARIABLE_NAME"), 0, wxDATAVIEW_CELL_INERT, 150, wxALIGN_LEFT);
+    m_display->AppendTextColumn(wxintl::translate("VARIABLE_VALUE"), 1, wxDATAVIEW_CELL_INERT, 150, wxALIGN_LEFT);
 
     m_model = new VariableTableModel;
     m_display->AssociateModel(m_model.get());
@@ -53,7 +53,7 @@ output_dialog::output_dialog(frame_editor *parent) :
 
     SetSizerAndFit(sizer);
 
-    error_dialog = new TextDialog(this, intl::wxformat("LAYOUT_ERROR"));
+    error_dialog = new TextDialog(this, wxintl::translate("LAYOUT_ERROR"));
 }
 
 void output_dialog::OnClickUpdate(wxCommandEvent &) {
@@ -82,19 +82,19 @@ wxThread::ExitCode reader_thread::Entry() {
 
         if (!m_reader.get_notes().empty()) {
             auto *evt = new wxThreadEvent(wxEVT_COMMAND_LAYOUT_ERROR);
-            evt->SetString(util::to_wx(util::string_join(m_reader.get_notes(), "\n\n")));
+            evt->SetString(wxintl::to_wx(util::string_join(m_reader.get_notes(), "\n\n")));
             evt->SetInt(0);
             wxQueueEvent(parent, evt);
         }
         return (wxThread::ExitCode) 0;
     } catch (const scripted_error &error) {
         auto *evt = new wxThreadEvent(wxEVT_COMMAND_LAYOUT_ERROR);
-        evt->SetString(util::to_wx(error.what()));
+        evt->SetString(wxintl::to_wx(error.what()));
         evt->SetInt(error.errcode);
         wxQueueEvent(parent, evt);
     } catch (const std::exception &error) {
         auto *evt = new wxThreadEvent(wxEVT_COMMAND_LAYOUT_ERROR);
-        evt->SetString(util::to_wx(error.what()));
+        evt->SetString(wxintl::to_wx(error.what()));
         evt->SetInt(-1);
         wxQueueEvent(parent, evt);
     } catch (reader_aborted) {
@@ -125,11 +125,11 @@ void output_dialog::OnLayoutError(wxCommandEvent &evt) {
 
     int errcode = evt.GetInt();
     if (errcode == 0) {
-        error_dialog->SetTitle(intl::wxformat("LAYOUT_NOTES"));
+        error_dialog->SetTitle(wxintl::translate("LAYOUT_NOTES"));
     } else if (errcode == -1) {
-        error_dialog->SetTitle(intl::wxformat("LAYOUT_FATAL_ERROR"));
+        error_dialog->SetTitle(wxintl::translate("LAYOUT_FATAL_ERROR"));
     } else {
-        error_dialog->SetTitle(intl::wxformat("LAYOUT_ERROR_CODE", errcode));
+        error_dialog->SetTitle(wxintl::translate("LAYOUT_ERROR_CODE", errcode));
     }
     error_dialog->ShowText(evt.GetString());
 }
@@ -139,6 +139,6 @@ void output_dialog::OnReadCompleted(wxCommandEvent &evt) {
 
     int i=1;
     for (const variable_map &table : m_reader.get_values()) {
-        m_model->AddTable(intl::wxformat("TABLE_NUMBER", i++), table);
+        m_model->AddTable(wxintl::translate("TABLE_NUMBER", i++), table);
     }
 }

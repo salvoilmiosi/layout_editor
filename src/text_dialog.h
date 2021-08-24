@@ -7,7 +7,7 @@
 #include <wx/textctrl.h>
 #include <wx/button.h>
 
-#include "wxformat.h"
+#include "wxintl.h"
 
 class TextDialog : public wxDialog {
 public:
@@ -20,7 +20,7 @@ public:
         m_text_ctl->SetFont(wxFont(10, wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
         sizer->Add(m_text_ctl, wxSizerFlags(1).Expand().Border(wxALL, 5));
 
-        sizer->Add(new wxButton(this, wxID_OK, intl::wxformat("OK")), wxSizerFlags().Center().Border(wxALL, 5));
+        sizer->Add(new wxButton(this, wxID_OK, wxintl::translate("OK")), wxSizerFlags().Center().Border(wxALL, 5));
         SetSizer(sizer);
     }
 

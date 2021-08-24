@@ -100,7 +100,7 @@ public:
     virtual bool TransferToWindow() override {
         if (m_value) {
             WindowType *ctl = dynamic_cast<WindowType*>(GetWindow());
-            ctl->SetValue(util::to_wx(*m_value));
+            ctl->SetValue(wxintl::to_wx(*m_value));
         }
         return true;
     }
@@ -111,7 +111,7 @@ enum {
 };
 
 box_dialog::box_dialog(frame_editor *parent, layout_box &out_box) :
-    wxDialog(parent, wxID_ANY, intl::wxformat("EDIT_BOX"), wxDefaultPosition, wxSize(700, 500), wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER), m_box(out_box), app(parent)
+    wxDialog(parent, wxID_ANY, wxintl::translate("EDIT_BOX"), wxDefaultPosition, wxSize(700, 500), wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER), m_box(out_box), app(parent)
 {
     wxBoxSizer *top_level = new wxBoxSizer(wxVERTICAL);
 
@@ -128,13 +128,13 @@ box_dialog::box_dialog(frame_editor *parent, layout_box &out_box) :
         sizer->Add(hsizer, wxSizerFlags(vprop).Expand().Border(wxALL, 5));
     };
     
-    addLabelAndCtrl(intl::wxformat("BOX_NAME"), 0, 1, new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, StringValidator(&m_box.name)));
+    addLabelAndCtrl(wxintl::translate("BOX_NAME"), 0, 1, new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, StringValidator(&m_box.name)));
 
     auto add_radio_btns = [&](const wxString &label, auto &value) {
         using enum_type = std::decay_t<decltype(value)>;
         bool first = true;
         auto create_btn = [&](enum_type i) {
-            auto ret = new wxRadioButton(this, wxID_ANY, enums::get_label(i),
+            auto ret = new wxRadioButton(this, wxID_ANY, wxintl::enum_label(i),
                 wxDefaultPosition, wxDefaultSize, first ? wxRB_GROUP : 0,
                 RadioGroupValidator(i, value));
             first = false;
@@ -148,15 +148,15 @@ box_dialog::box_dialog(frame_editor *parent, layout_box &out_box) :
     auto add_check_boxes = [&] <enums::flags_enum enum_type>(const wxString &label, enums::bitset<enum_type> &value) {
         auto create_btn = [&](size_t i) {
             const auto flag = static_cast<enum_type>(1 << i);
-            return new wxCheckBox(this, wxID_ANY, enums::get_label(flag), wxDefaultPosition, wxDefaultSize, 0, FlagValidator(flag, value));  
+            return new wxCheckBox(this, wxID_ANY, wxintl::enum_label(flag), wxDefaultPosition, wxDefaultSize, 0, FlagValidator(flag, value));  
         };
         [&] <size_t ... Is> (std::index_sequence<Is...>) {
             addLabelAndCtrl(label, 0, 0, create_btn(Is) ...);
         }(std::make_index_sequence<enums::size<enum_type>()>{});
     };
 
-    add_radio_btns(intl::wxformat("BOX_MODE"), m_box.mode);
-    add_check_boxes(intl::wxformat("BOX_FLAGS"), m_box.flags);
+    add_radio_btns(wxintl::translate("BOX_MODE"), m_box.mode);
+    add_check_boxes(wxintl::translate("BOX_FLAGS"), m_box.flags);
 
     auto make_script_box = [&](std::string &value) {
         wxStyledTextCtrl *text = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
@@ -167,9 +167,9 @@ box_dialog::box_dialog(frame_editor *parent, layout_box &out_box) :
         return text;
     };
 
-    addLabelAndCtrl(intl::wxformat("BOX_GOTO_LABEL"), 0, 1, new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, StringValidator(&m_box.goto_label)));
-    addLabelAndCtrl(intl::wxformat("BOX_SPACERS"), 1, 1, make_script_box(m_box.spacers));
-    addLabelAndCtrl(intl::wxformat("BOX_SCRIPT"), 3, 1, make_script_box(m_box.script));
+    addLabelAndCtrl(wxintl::translate("BOX_GOTO_LABEL"), 0, 1, new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, StringValidator(&m_box.goto_label)));
+    addLabelAndCtrl(wxintl::translate("BOX_SPACERS"), 1, 1, make_script_box(m_box.spacers));
+    addLabelAndCtrl(wxintl::translate("BOX_SCRIPT"), 3, 1, make_script_box(m_box.script));
 
     top_level->Add(sizer, wxSizerFlags(1).Expand().Border(wxALL, 5));
 
@@ -178,17 +178,17 @@ box_dialog::box_dialog(frame_editor *parent, layout_box &out_box) :
 
     wxBoxSizer *okCancelSizer = new wxBoxSizer(wxHORIZONTAL);
 
-    okCancelSizer->Add(new wxButton(this, wxID_OK, intl::wxformat("OK")), wxSizerFlags().Center().Border(wxALL, 5));
-    okCancelSizer->Add(new wxButton(this, wxID_CANCEL, intl::wxformat("Cancel")), wxSizerFlags().Center().Border(wxALL, 5));
-    okCancelSizer->Add(new wxButton(this, wxID_APPLY, intl::wxformat("Apply")), wxSizerFlags().Center().Border(wxALL, 5));
-    okCancelSizer->Add(new wxButton(this, BUTTON_TEST, intl::wxformat("Test")), wxSizerFlags().Center().Border(wxALL, 5));
+    okCancelSizer->Add(new wxButton(this, wxID_OK, wxintl::translate("OK")), wxSizerFlags().Center().Border(wxALL, 5));
+    okCancelSizer->Add(new wxButton(this, wxID_CANCEL, wxintl::translate("Cancel")), wxSizerFlags().Center().Border(wxALL, 5));
+    okCancelSizer->Add(new wxButton(this, wxID_APPLY, wxintl::translate("Apply")), wxSizerFlags().Center().Border(wxALL, 5));
+    okCancelSizer->Add(new wxButton(this, BUTTON_TEST, wxintl::translate("Test")), wxSizerFlags().Center().Border(wxALL, 5));
 
     top_level->Add(okCancelSizer, wxSizerFlags().Center().Border(wxALL, 5));
 
     SetSizer(top_level);
     Show();
 
-    reader_output = new TextDialog(this, intl::wxformat("TEST_OUTPUT"));
+    reader_output = new TextDialog(this, wxintl::translate("TEST_OUTPUT"));
 }
 
 std::map<layout_box *, box_dialog *> box_dialog::open_dialogs;
@@ -253,7 +253,7 @@ void box_dialog::OnTest(wxCommandEvent &evt) {
     TransferDataFromWindow();
     m_box.rotate(app->getBoxRotation());
     std::string text = app->getPdfDocument().get_text(m_box);
-    reader_output->ShowText(util::to_wx(app->getPdfDocument().get_text(m_box)));
+    reader_output->ShowText(wxintl::to_wx(app->getPdfDocument().get_text(m_box)));
     m_box = box_copy;
 }
 
@@ -269,7 +269,7 @@ void box_dialog::OnClose(wxCloseEvent &evt) {
     auto box_copy = m_box;
     TransferDataFromWindow();
     if (box_copy != m_box) {
-        wxMessageDialog dialog(this, intl::wxformat("SAVE_CHANGES_DIALOG"), intl::wxformat("PROGRAM_NAME"), wxYES_NO | wxCANCEL | wxICON_WARNING);
+        wxMessageDialog dialog(this, wxintl::translate("SAVE_CHANGES_DIALOG"), wxintl::translate("PROGRAM_NAME"), wxYES_NO | wxCANCEL | wxICON_WARNING);
 
         switch (dialog.ShowModal()) {
         case wxID_YES:

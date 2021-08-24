@@ -15,7 +15,7 @@ struct VariableTableModelNode {
         : parent(parent), name(name), value(value) {}
 
     VariableTableModelNode(VariableTableModelNode *parent, const wxString &name, const variable &var)
-        : parent(parent), name(name), value(util::to_wx(var.as_view()))
+        : parent(parent), name(name), value(wxintl::to_wx(var.as_view()))
     {
         if (var.is_array()) {
             const auto &arr = var.as_array();
@@ -29,7 +29,7 @@ struct VariableTableModelNode {
         : parent(parent), name(name)
     {
         for (const auto &[key, val] : table) {
-            children.emplace_back(this, util::to_wx(key), val);
+            children.emplace_back(this, wxintl::to_wx(key), val);
         }
     }
 };

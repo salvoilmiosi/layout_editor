@@ -17,7 +17,7 @@ BEGIN_EVENT_TABLE(box_editor_panel, wxImagePanel)
 END_EVENT_TABLE()
 
 box_editor_panel::box_editor_panel(wxWindow *parent, frame_editor *app) : wxImagePanel(parent), app(app) {
-    info_dialog = new TextDialog(this, intl::wxformat("TEST_OUTPUT"));
+    info_dialog = new TextDialog(this, wxintl::translate("TEST_OUTPUT"));
 }
 
 static void clamp_rect(pdf_rect &rect) {
@@ -204,10 +204,10 @@ void box_editor_panel::OnMouseUp(wxMouseEvent &evt) {
             }
             case TOOL_TEST: {
                 static auto choices = []<size_t ... Is> (std::index_sequence<Is...>) {
-                    wxString strings[] = {enums::get_label(static_cast<read_mode>(Is)) ... };
+                    wxString strings[] = {wxintl::enum_label(static_cast<read_mode>(Is)) ... };
                     return wxArrayString(sizeof(strings) / sizeof(wxString), strings);
                 } (std::make_index_sequence<enums::size<read_mode>()>{});
-                wxSingleChoiceDialog diag(this, intl::wxformat("DIALOG_TEST_READ_MODE"), intl::wxformat("DIALOG_TEST_READ_TITLE"), choices);
+                wxSingleChoiceDialog diag(this, wxintl::translate("DIALOG_TEST_READ_MODE"), wxintl::translate("DIALOG_TEST_READ_TITLE"), choices);
                 if (diag.ShowModal() == wxID_OK) {
                     pdf_rect box;
                     box.x = std::min(start_pt.x, end_pt.x);
@@ -217,7 +217,7 @@ void box_editor_panel::OnMouseUp(wxMouseEvent &evt) {
                     box.page = app->getSelectedPage();
                     box.mode = static_cast<read_mode>(diag.GetSelection());
                     box.rotate(app->getBoxRotation());
-                    info_dialog->ShowText(util::to_wx(app->getPdfDocument().get_text(box)));
+                    info_dialog->ShowText(wxintl::to_wx(app->getPdfDocument().get_text(box)));
                 }
                 break;
             }
