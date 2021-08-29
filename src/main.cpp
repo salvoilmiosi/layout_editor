@@ -1,6 +1,7 @@
 #include "editor.h"
 
 #include <wx/cmdline.h>
+#include <wx/config.h>
 
 class MainApp : public wxApp {
 public:
@@ -20,6 +21,8 @@ bool MainApp::OnInit() {
     if (!wxApp::OnInit()) {
         return false;
     }
+
+    wxConfig::Set(new wxConfig("BillLayoutScript"));
     
     wxImage::AddHandler(new wxPNGHandler);
 

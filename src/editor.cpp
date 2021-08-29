@@ -84,8 +84,6 @@ DECLARE_RESOURCE(tool_settings_png)
 constexpr size_t MAX_HISTORY_SIZE = 20;
 
 frame_editor::frame_editor() : wxFrame(nullptr, wxID_ANY, wxintl::translate("PROGRAM_NAME"), wxDefaultPosition, wxSize(900, 700)) {
-    m_config = new wxConfig("BillLayoutScript");
-
     wxMenuBar *menuBar = new wxMenuBar();
     
     m_bls_history = new wxFileHistory(MAX_RECENT_FILES_HISTORY, MENU_OPEN_RECENT);
@@ -94,13 +92,13 @@ frame_editor::frame_editor() : wxFrame(nullptr, wxID_ANY, wxintl::translate("PRO
     m_pdf_history = new wxFileHistory(MAX_RECENT_PDFS_HISTORY, MENU_OPEN_PDF_RECENT);
     m_pdf_history->UseMenu(m_pdf_history_menu = new wxMenu);
 
-    m_config->SetPath("/RecentFiles");
-    m_bls_history->Load(*m_config);
+    wxConfig::Get()->SetPath("/RecentFiles");
+    m_bls_history->Load(*wxConfig::Get());
 
-    m_config->SetPath("/RecentPdfs");
-    m_pdf_history->Load(*m_config);
-
-    m_config->SetPath("/");
+    wxConfig::Get()->SetPath("/RecentPdfs");
+    m_pdf_history->Load(*wxConfig::Get());
+    
+    wxConfig::Get()->SetPath("/");
 
     wxMenu *menuFile = new wxMenu;
     menuFile->Append(MENU_NEW, wxintl::translate("MENU_NEW"), wxintl::translate("MENU_NEW_HINT"));
@@ -222,10 +220,10 @@ void frame_editor::openFile(const wxString &filename) {
             history.clear();
             updateLayout();
 
+            wxConfig::Get()->SetPath("/RecentFiles");
             m_bls_history->AddFileToHistory(filename);
-            m_config->SetPath("/RecentFiles");
-            m_bls_history->Save(*m_config);
-            m_config->SetPath("/");
+            m_bls_history->Save(*wxConfig::Get());
+            wxConfig::Get()->SetPath("/");
         }
     } catch (const std::exception &error) {
         wxMessageBox(wxintl::translate("CANT_OPEN_FILE", filename.ToStdString()), wxintl::translate("PROGRAM_NAME"), wxOK | wxICON_ERROR);
@@ -234,14 +232,14 @@ void frame_editor::openFile(const wxString &filename) {
 
 bool frame_editor::save(bool saveAs) {
     if (m_filename.empty() || saveAs) {
-        wxString lastLayoutDir = m_config->Read("LastLayoutDir");
+        wxString lastLayoutDir = wxConfig::Get()->Read("LastLayoutDir");
         wxFileDialog diag(this, wxintl::translate("SAVE_LAYOUT_DIALOG"), lastLayoutDir, m_filename.string(), 
             wxintl::to_wx(std::format("{} (*.bls)|*.bls|{} (*.*)|*.*", intl::translate("Layout files"), intl::translate("All files"))), wxFD_SAVE);
 
         if (diag.ShowModal() == wxID_CANCEL)
             return false;
 
-        m_config->Write("LastLayoutDir", wxFileName(diag.GetPath()).GetPath());
+        wxConfig::Get()->Write("LastLayoutDir", wxFileName(diag.GetPath()).GetPath());
         m_filename = diag.GetPath().ToStdString();
     }
     try {
@@ -302,25 +300,24 @@ void frame_editor::loadPdf(const wxString &filename) {
         m_page->SetMaxPages(m_doc.num_pages());
         setSelectedPage(1, true);
 
+        wxConfig::Get()->SetPath("/RecentPdfs");
         m_pdf_history->AddFileToHistory(m_doc.filename().string());
-
-        m_config->SetPath("/RecentPdfs");
-        m_pdf_history->Save(*m_config);
-        m_config->SetPath("/");
+        m_pdf_history->Save(*wxConfig::Get());
+        wxConfig::Get()->SetPath("/");
     } catch (const file_error &error) {
         wxMessageBox(error.what(), wxintl::translate("PROGRAM_NAME"), wxICON_ERROR);
     }
 }
 
 wxString frame_editor::getControlScript(bool open_dialog) {
-    wxString filename = m_config->Read("ControlScriptFilename");
+    wxString filename = wxConfig::Get()->Read("ControlScriptFilename");
     if (filename.empty() || open_dialog) {
         wxFileDialog diag(this, wxintl::translate("OPEN_CONTROL_SCRIPT_DIALOG"), wxFileName(filename).GetPath(), wxEmptyString,
             wxintl::to_wx(std::format("{} (*.bls)|*.bls|{} (*.*)|*.*", intl::translate("Layout files"), intl::translate("All files"))));
 
         if (diag.ShowModal() == wxID_OK) {
             filename = diag.GetPath();
-            m_config->Write("ControlScriptFilename", filename);
+            wxConfig::Get()->Write("ControlScriptFilename", filename);
         }
     }
     return filename;

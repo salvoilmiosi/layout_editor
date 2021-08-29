@@ -25,7 +25,7 @@ void frame_editor::OnNewFile(wxCommandEvent &evt) {
 }
 
 void frame_editor::OnOpenFile(wxCommandEvent &evt) {
-    wxString lastLayoutDir = m_config->Read("LastLayoutDir");
+    wxString lastLayoutDir = wxConfig::Get()->Read("LastLayoutDir");
     wxFileDialog diag(this, wxintl::translate("OPEN_LAYOUT_DIALOG"), lastLayoutDir, wxEmptyString,
         wxintl::to_wx(std::format("{} (*.bls)|*.bls|{} (*.*)|*.*", intl::translate("Layout files"), intl::translate("All files"))));
 
@@ -33,7 +33,7 @@ void frame_editor::OnOpenFile(wxCommandEvent &evt) {
         return;
 
     if (saveIfModified()) {
-        m_config->Write("LastLayoutDir", wxFileName(diag.GetPath()).GetPath());
+        wxConfig::Get()->Write("LastLayoutDir", wxFileName(diag.GetPath()).GetPath());
         openFile(diag.GetPath().ToStdString());
     }
 }
@@ -156,14 +156,14 @@ void frame_editor::OnRotate(wxCommandEvent &evt) {
 }
 
 void frame_editor::OnLoadPdf(wxCommandEvent &evt) {
-    wxString lastPdfDir = m_config->Read("LastPdfDir");
+    wxString lastPdfDir = wxConfig::Get()->Read("LastPdfDir");
     wxFileDialog diag(this, wxintl::translate("OPEN_PDF_DIALOG"), lastPdfDir, wxEmptyString,
         wxintl::to_wx(std::format("{} (*.pdf)|*.pdf|{} (*.*)|*.*", intl::translate("PDF files"), intl::translate("All files"))));
 
     if (diag.ShowModal() == wxID_CANCEL)
         return;
 
-    m_config->Write("LastPdfDir", wxFileName(diag.GetPath()).GetPath());
+    wxConfig::Get()->Write("LastPdfDir", wxFileName(diag.GetPath()).GetPath());
     loadPdf(diag.GetPath().ToStdString());
     updateLayout(false);
 }

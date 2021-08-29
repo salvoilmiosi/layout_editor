@@ -85,8 +85,6 @@ private:
 private:
     class box_editor_panel *m_image;
 
-    wxConfig *m_config;
-
     wxFileHistory *m_bls_history;
     wxMenu *m_bls_history_menu;
     
