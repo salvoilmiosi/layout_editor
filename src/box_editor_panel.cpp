@@ -203,10 +203,10 @@ void box_editor_panel::OnMouseUp(wxMouseEvent &evt) {
                 break;
             }
             case TOOL_TEST: {
-                static auto choices = []<size_t ... Is> (std::index_sequence<Is...>) {
-                    wxString strings[] = {wxintl::enum_label(static_cast<read_mode>(Is)) ... };
+                static auto choices = []<read_mode ... Es> (enums::enum_sequence<Es...>) {
+                    wxString strings[] = {wxintl::enum_label(Es) ... };
                     return wxArrayString(sizeof(strings) / sizeof(wxString), strings);
-                } (std::make_index_sequence<enums::size<read_mode>()>{});
+                } (enums::make_enum_sequence<read_mode>());
                 wxSingleChoiceDialog diag(this, wxintl::translate("DIALOG_TEST_READ_MODE"), wxintl::translate("DIALOG_TEST_READ_TITLE"), choices);
                 if (diag.ShowModal() == wxID_OK) {
                     pdf_rect box;

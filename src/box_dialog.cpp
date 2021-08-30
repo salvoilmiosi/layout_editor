@@ -132,27 +132,25 @@ box_dialog::box_dialog(frame_editor *parent, layout_box &out_box) :
 
     auto add_radio_btns = [&](const wxString &label, auto &value) {
         using enum_type = std::decay_t<decltype(value)>;
-        bool first = true;
-        auto create_btn = [&](enum_type i) {
-            auto ret = new wxRadioButton(this, wxID_ANY, wxintl::enum_label(i),
-                wxDefaultPosition, wxDefaultSize, first ? wxRB_GROUP : 0,
-                RadioGroupValidator(i, value));
-            first = false;
-            return ret;
-        };
-        [&] <size_t ... Is> (std::index_sequence<Is...>) {
-            addLabelAndCtrl(label, 0, 0, create_btn(static_cast<enum_type>(Is)) ...);
-        }(std::make_index_sequence<enums::size<enum_type>()>{});
+        [&] <enum_type ... Es> (enums::enum_sequence<Es...>) {
+            auto create_btn = [&, first=true](enum_type i) mutable {
+                auto ret = new wxRadioButton(this, wxID_ANY, wxintl::enum_label(i),
+                    wxDefaultPosition, wxDefaultSize, first ? wxRB_GROUP : 0,
+                    RadioGroupValidator(i, value));
+                first = false;
+                return ret;
+            };
+            addLabelAndCtrl(label, 0, 0, create_btn(Es) ...);
+        }(enums::make_enum_sequence<enum_type>());
     };
 
     auto add_check_boxes = [&] <enums::flags_enum enum_type>(const wxString &label, enums::bitset<enum_type> &value) {
-        auto create_btn = [&](size_t i) {
-            const auto flag = static_cast<enum_type>(1 << i);
-            return new wxCheckBox(this, wxID_ANY, wxintl::enum_label(flag), wxDefaultPosition, wxDefaultSize, 0, FlagValidator(flag, value));  
-        };
-        [&] <size_t ... Is> (std::index_sequence<Is...>) {
-            addLabelAndCtrl(label, 0, 0, create_btn(Is) ...);
-        }(std::make_index_sequence<enums::size<enum_type>()>{});
+        [&] <enum_type ... Es> (enums::enum_sequence<Es...>) {
+            auto create_btn = [&](enum_type flag){
+                return new wxCheckBox(this, wxID_ANY, wxintl::enum_label(flag), wxDefaultPosition, wxDefaultSize, 0, FlagValidator(flag, value));
+            };
+            addLabelAndCtrl(label, 0, 0, create_btn(Es) ...);
+        }(enums::make_enum_sequence<enum_type>());
     };
 
     add_radio_btns(wxintl::translate("BOX_MODE"), m_box.mode);
