@@ -10,7 +10,7 @@
 
 #include "editor.h"
 #include "utils.h"
-template<enums::is_enum T>
+template<enums::reflected_enum T>
 class RadioGroupValidator : public wxValidator {
 protected:
     T m_radio;

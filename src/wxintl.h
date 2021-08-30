@@ -16,7 +16,7 @@ namespace wxintl {
         return to_wx(intl::translate(std::forward<Ts>(args) ...));
     }
 
-    template<enums::is_enum E>
+    template<enums::reflected_enum E>
     inline wxString enum_label(E value) {
         return to_wx(intl::enum_label(value));
     }
