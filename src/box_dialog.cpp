@@ -130,10 +130,9 @@ box_dialog::box_dialog(frame_editor *parent, layout_box &out_box) :
     
     addLabelAndCtrl(wxintl::translate("BOX_NAME"), 0, 1, new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, StringValidator(&m_box.name)));
 
-    auto add_radio_btns = [&](const wxString &label, auto &value) {
-        using enum_type = std::decay_t<decltype(value)>;
-        [&] <enum_type ... Es> (enums::enum_sequence<Es...>) {
-            auto create_btn = [&, first=true](enum_type i) mutable {
+    auto add_radio_btns = [&]<enums::reflected_enum Enum>(const wxString &label, Enum &value) {
+        [&] <Enum ... Es> (enums::enum_sequence<Es...>) {
+            auto create_btn = [&, first=true](Enum i) mutable {
                 auto ret = new wxRadioButton(this, wxID_ANY, wxintl::enum_label(i),
                     wxDefaultPosition, wxDefaultSize, first ? wxRB_GROUP : 0,
                     RadioGroupValidator(i, value));
@@ -141,16 +140,16 @@ box_dialog::box_dialog(frame_editor *parent, layout_box &out_box) :
                 return ret;
             };
             addLabelAndCtrl(label, 0, 0, create_btn(Es) ...);
-        }(enums::make_enum_sequence<enum_type>());
+        }(enums::make_enum_sequence<Enum>());
     };
 
-    auto add_check_boxes = [&] <enums::flags_enum enum_type>(const wxString &label, enums::bitset<enum_type> &value) {
-        [&] <enum_type ... Es> (enums::enum_sequence<Es...>) {
-            auto create_btn = [&](enum_type flag){
+    auto add_check_boxes = [&] <enums::flags_enum Enum>(const wxString &label, enums::bitset<Enum> &value) {
+        [&] <Enum ... Es> (enums::enum_sequence<Es...>) {
+            auto create_btn = [&](Enum flag){
                 return new wxCheckBox(this, wxID_ANY, wxintl::enum_label(flag), wxDefaultPosition, wxDefaultSize, 0, FlagValidator(flag, value));
             };
             addLabelAndCtrl(label, 0, 0, create_btn(Es) ...);
-        }(enums::make_enum_sequence<enum_type>());
+        }(enums::make_enum_sequence<Enum>());
     };
 
     add_radio_btns(wxintl::translate("BOX_MODE"), m_box.mode);
