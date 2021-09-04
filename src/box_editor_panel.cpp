@@ -260,7 +260,7 @@ void box_editor_panel::OnDoubleClick(wxMouseEvent &evt) {
 }
 
 template<enums::reflected_enum T>
-static constexpr T operator | (T lhs, T rhs) {
+constexpr T operator | (T lhs, T rhs) {
     using underlying = std::underlying_type_t<T>;
     return static_cast<T>(static_cast<underlying>(lhs) | static_cast<underlying>(rhs));
 }

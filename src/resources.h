@@ -12,7 +12,7 @@
     extern const int RESOURCE_LENGTH(name); \
     std::string_view name { RESOURCE_DATA(name), size_t(RESOURCE_LENGTH(name)) };
 
-static inline wxBitmap loadPNG(std::string_view resource) {
+inline wxBitmap loadPNG(std::string_view resource) {
     return wxBitmap::NewFromPNGData(resource.data(), resource.size());
 }
 
