@@ -7,6 +7,8 @@
 
 #include "move_page_dialog.h"
 
+using namespace enums::flag_operators;
+
 BEGIN_EVENT_TABLE(box_editor_panel, wxImagePanel)
     EVT_LEFT_DOWN(box_editor_panel::OnMouseDown)
     EVT_LEFT_UP(box_editor_panel::OnMouseUp)
@@ -89,20 +91,20 @@ resize_node box_editor_panel::getBoxResizeNode(float x, float y) {
     float nh = RESIZE_TOLERANCE / scaled_height();
 
     auto check_box = [&](const layout_box &box) {
-        enums::bitset<direction> node;
+        direction node{};
         if (box.page == app->getSelectedPage()) {
             if (y > box.y - nh && y < box.y + box.h + nh) {
                 if (x > box.x - nw && x < box.x + nw) {
-                    node.set(direction::LEFT);
+                    node |= direction::LEFT;
                 } else if (x > box.x + box.w - nw && x < box.x + box.w + nw) {
-                    node.set(direction::RIGHT);
+                    node |= direction::RIGHT;
                 }
             }
             if (x > box.x - nw && x < box.x + box.w + nw) {
                 if (y > box.y - nh && y < box.y + nh) {
-                    node.set(direction::TOP);
+                    node |= direction::TOP;
                 } else if (y > box.y + box.h - nh && y < box.y + box.h + nh) {
-                    node.set(direction::BOTTOM);
+                    node |= direction::BOTTOM;
                 }
             }
         }
@@ -110,14 +112,14 @@ resize_node box_editor_panel::getBoxResizeNode(float x, float y) {
     };
     if (selected_box) {
         auto node = check_box(*selected_box);
-        if (!node.empty()) return resize_node{app->layout.get_box_iterator(selected_box), node};
+        if (bool(node)) return {app->layout.get_box_iterator(selected_box), node};
     }
     auto it = app->layout.begin();
     for (; it != app->layout.end(); ++it) {
         auto node = check_box(*it);
-        if (!node.empty()) return resize_node{it, node};
+        if (bool(node)) return {it, node};
     }
-    return resize_node{it, 0};
+    return {it};
 };
 
 void box_editor_panel::OnMouseDown(wxMouseEvent &evt) {
@@ -151,7 +153,7 @@ void box_editor_panel::OnMouseDown(wxMouseEvent &evt) {
         }
         case TOOL_RESIZE: {
             auto node = getBoxResizeNode(start_pt.x, start_pt.y);
-            if (node.directions.empty()) {
+            if (!bool(node.directions)) {
                 app->selectBox(nullptr);
             } else {
                 app->selectBox(&*node.box);
@@ -259,12 +261,6 @@ void box_editor_panel::OnDoubleClick(wxMouseEvent &evt) {
     }
 }
 
-template<enums::reflected_enum T>
-constexpr T operator | (T lhs, T rhs) {
-    using underlying = std::underlying_type_t<T>;
-    return static_cast<T>(static_cast<underlying>(lhs) | static_cast<underlying>(rhs));
-}
-
 void box_editor_panel::OnMouseMove(wxMouseEvent &evt) {
     end_pt = screen_to_layout(evt.GetPosition());
 
@@ -275,16 +271,16 @@ void box_editor_panel::OnMouseMove(wxMouseEvent &evt) {
             selected_box->y = dragging_offset.y + end_pt.y;
             break;
         case TOOL_RESIZE: {
-            if (node_directions.check(direction::TOP)) {
+            if (bool(node_directions & direction::TOP)) {
                 selected_box->h = selected_box->y + selected_box->h - end_pt.y;
                 selected_box->y = end_pt.y;
-            } else if (node_directions.check(direction::BOTTOM)) {
+            } else if (bool(node_directions & direction::BOTTOM)) {
                 selected_box->h = end_pt.y - selected_box->y;
             }
-            if (node_directions.check(direction::LEFT)) {
+            if (bool(node_directions & direction::LEFT)) {
                 selected_box->w = selected_box->x + selected_box->w - end_pt.x;
                 selected_box->x = end_pt.x;
-            } else if (node_directions.check(direction::RIGHT)) {
+            } else if (bool(node_directions & direction::RIGHT)) {
                 selected_box->w = end_pt.x - selected_box->x;
             }
             break;
@@ -300,7 +296,7 @@ void box_editor_panel::OnMouseMove(wxMouseEvent &evt) {
         switch (selected_tool) {
         case TOOL_RESIZE:
             auto node = getBoxResizeNode(end_pt.x, end_pt.y);
-            switch (static_cast<direction>(node.directions.data())) {
+            switch (node.directions) {
             case direction::LEFT:
             case direction::RIGHT:
                 SetCursor(wxStockCursor::wxCURSOR_SIZEWE);

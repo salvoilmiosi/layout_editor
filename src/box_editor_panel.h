@@ -20,7 +20,7 @@ DEFINE_ENUM_FLAGS(direction,
 
 struct resize_node {
     layout_box_list::iterator box;
-    enums::bitset<direction> directions;
+    direction directions{};
 };
 
 class box_editor_panel : public wxImagePanel {
@@ -64,7 +64,7 @@ private:
 
     wxRealPoint start_pt, end_pt, dragging_offset;
     layout_box *selected_box = nullptr;
-    enums::bitset<direction> node_directions;
+    direction node_directions{};
     bool mouseIsDown = false;
 
     int selected_tool = TOOL_SELECT;
