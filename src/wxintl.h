@@ -1,9 +1,7 @@
 #ifndef __WXFORMAT_H__
 #define __WXFORMAT_H__
 
-#include "translations.h"
-#include "enums.h"
-
+#include "utils/translations.h"
 #include <wx/string.h>
 
 namespace wxintl {

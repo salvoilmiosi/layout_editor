@@ -8,7 +8,8 @@
 
 #include "parser.h"
 #include "reader.h"
-#include "utils.h"
+
+#include "utils/utils.h"
 
 enum {
     CTL_DEBUG,

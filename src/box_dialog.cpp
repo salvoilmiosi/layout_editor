@@ -9,7 +9,8 @@
 #include <wx/stc/stc.h>
 
 #include "editor.h"
-#include "utils.h"
+#include "utils/utils.h"
+
 template<enums::reflected_enum T>
 class RadioGroupValidator : public wxValidator {
 protected:
