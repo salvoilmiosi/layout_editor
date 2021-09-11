@@ -16,7 +16,6 @@ src/main.cpp
 src/move_page_dialog.cpp
 src/output_dialog.cpp
 src/page_ctl.cpp
-src/pdf_to_image.cpp
 resources/resources.rc
 )
 

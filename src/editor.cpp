@@ -9,7 +9,6 @@
 
 #include "resources.h"
 #include "box_editor_panel.h"
-#include "pdf_to_image.h"
 #include "box_dialog.h"
 
 enum {
@@ -335,7 +334,9 @@ void frame_editor::setSelectedPage(int page, bool force) {
     selected_page = page;
 
     m_page->SetValue(page);
-    m_image->setImage(pdf_to_image(m_doc, page, rotation));
+
+    pdf_image image = m_doc.render_page(page, rotation);
+    m_image->setImage(wxImage(image.width(), image.height(), image.release()));
 }
 
 void frame_editor::selectBox(layout_box *box) {
