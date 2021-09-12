@@ -212,8 +212,7 @@ frame_editor::frame_editor() : wxFrame(nullptr, wxID_ANY, wxintl::translate("PRO
 void frame_editor::openFile(const wxString &filename) {
     try {
         if (box_dialog::closeAll()) {
-            m_filename = filename.ToStdString();
-            layout = layout_box_list::from_file(m_filename);
+            layout = layout_box_list(filename.ToStdString());
 
             modified = false;
             history.clear();
@@ -230,19 +229,19 @@ void frame_editor::openFile(const wxString &filename) {
 }
 
 bool frame_editor::save(bool saveAs) {
-    if (m_filename.empty() || saveAs) {
+    if (layout.filename.empty() || saveAs) {
         wxString lastLayoutDir = wxConfig::Get()->Read("LastLayoutDir");
-        wxFileDialog diag(this, wxintl::translate("SAVE_LAYOUT_DIALOG"), lastLayoutDir, m_filename.string(), 
+        wxFileDialog diag(this, wxintl::translate("SAVE_LAYOUT_DIALOG"), lastLayoutDir, layout.filename.string(), 
             wxintl::to_wx(std::format("{} (*.bls)|*.bls|{} (*.*)|*.*", intl::translate("Layout files"), intl::translate("All files"))), wxFD_SAVE);
 
         if (diag.ShowModal() == wxID_CANCEL)
             return false;
 
         wxConfig::Get()->Write("LastLayoutDir", wxFileName(diag.GetPath()).GetPath());
-        m_filename = diag.GetPath().ToStdString();
+        layout.filename = diag.GetPath().ToStdString();
     }
     try {
-        layout.save_file(m_filename);
+        layout.save_file();
     } catch (const std::exception &error) {
         wxMessageBox(error.what(), wxintl::translate("PROGRAM_NAME"), wxICON_ERROR);
         return false;

@@ -48,7 +48,6 @@ public:
     }
 
     layout_box_list layout;
-    std::filesystem::path m_filename;
 
 private:
     void OnNewFile      (wxCommandEvent &evt);

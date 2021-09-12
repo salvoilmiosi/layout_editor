@@ -2,6 +2,7 @@
 
 #include <wx/statline.h>
 #include <wx/filename.h>
+#include <wx/filefn.h>
 
 #include "resources.h"
 #include "editor.h"
@@ -76,9 +77,8 @@ reader_thread::~reader_thread() {
 
 wxThread::ExitCode reader_thread::Entry() {
     try {
-        std::filesystem::path path = parent->parent->m_filename;
-        if (path.empty()) path = std::filesystem::path(parent->parent->getControlScript().ToStdString());
-        m_reader.add_code(parser{}.read_layout(path, m_layout));
+        if (m_layout.filename.empty()) m_layout.filename = std::filesystem::path(wxGetCwd().ToStdString()) / "tmp.bls";
+        m_reader.add_layout(m_layout);
         m_reader.start();
         wxQueueEvent(parent, new wxThreadEvent(wxEVT_COMMAND_READ_COMPLETE));
 

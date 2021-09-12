@@ -17,7 +17,6 @@
 void frame_editor::OnNewFile(wxCommandEvent &evt) {
     if (box_dialog::closeAll() && saveIfModified()) {
         modified = false;
-        m_filename.clear();
         layout.clear();
         history.clear();
         updateLayout(false);
@@ -112,11 +111,11 @@ void frame_editor::OnPaste(wxCommandEvent &evt) {
     }
     
     int selection = m_list_boxes->GetSelection();
-    layout_box_list::iterator selected = layout.end();
+    layout_box_list::const_iterator selected = layout.end();
     if (selection >= 0) {
         selected = std::next(layout.begin(), selection);
     }
-    auto &box = *layout.insert_after(selected, std::move(clipboard));
+    auto &box = *layout.emplace(selected, std::move(clipboard));
     updateLayout();
     selectBox(&box);
 }
@@ -136,8 +135,9 @@ void frame_editor::OnFindLayout(wxCommandEvent &evt) {
     }
 
     try {
-        reader my_reader(m_doc);
-        my_reader.add_layout(getControlScript().ToStdString());
+        reader my_reader;
+        my_reader.set_document(m_doc);
+        my_reader.add_layout(layout_box_list(getControlScript().ToStdString()));
         my_reader.add_flag(reader_flags::FIND_LAYOUT);
         my_reader.start();
 

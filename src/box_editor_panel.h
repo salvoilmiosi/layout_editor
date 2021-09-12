@@ -19,8 +19,12 @@ DEFINE_ENUM_FLAGS(direction,
 )
 
 struct resize_node {
-    layout_box_list::iterator box;
+    layout_box *box = nullptr;
     direction directions{};
+
+    operator bool() const {
+        return box && bool(directions);
+    }
 };
 
 class box_editor_panel : public wxImagePanel {
@@ -54,7 +58,7 @@ private:
         );
     }
 
-    layout_box_list::iterator getBoxAt(float x, float y);
+    layout_box *getBoxAt(float x, float y);
     resize_node getBoxResizeNode(float x, float y);
 
 private:

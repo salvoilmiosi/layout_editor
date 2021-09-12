@@ -75,13 +75,20 @@ void box_editor_panel::render(wxDC &dc) {
     }
 }
 
+template<typename T>
+auto find_iterator(const std::list<T> &list, const T *ptr) {
+    return std::ranges::find(list, ptr, [](const T &obj) { return &obj; });
+};
 
-layout_box_list::iterator box_editor_panel::getBoxAt(float x, float y) {
+layout_box *box_editor_panel::getBoxAt(float x, float y) {
     auto check_box = [&](const layout_box &box) {
         return (x > box.x && x < box.x + box.w && y > box.y && y < box.y + box.h && box.page == app->getSelectedPage());
     };
-    if (selected_box && check_box(*selected_box)) return app->layout.get_box_iterator(selected_box);
-    return std::ranges::find_if(app->layout, check_box);
+    if (selected_box && check_box(*selected_box)) return selected_box;
+    for (auto &box : app->layout) {
+        if (check_box(box)) return &box;
+    }
+    return nullptr;
 };
 
 resize_node box_editor_panel::getBoxResizeNode(float x, float y) {
@@ -111,15 +118,12 @@ resize_node box_editor_panel::getBoxResizeNode(float x, float y) {
         return node;
     };
     if (selected_box) {
-        auto node = check_box(*selected_box);
-        if (bool(node)) return {app->layout.get_box_iterator(selected_box), node};
+        if (auto node = check_box(*selected_box); bool(node)) return {selected_box, node};
     }
-    auto it = app->layout.begin();
-    for (; it != app->layout.end(); ++it) {
-        auto node = check_box(*it);
-        if (bool(node)) return {it, node};
+    for (auto &box : app->layout) {
+        if (auto node = check_box(box); bool(node)) return {&box, node};
     }
-    return {it};
+    return {};
 };
 
 void box_editor_panel::OnMouseDown(wxMouseEvent &evt) {
@@ -127,9 +131,9 @@ void box_editor_panel::OnMouseDown(wxMouseEvent &evt) {
     if (raw_image.IsOk() && !mouseIsDown) {
         switch (selected_tool) {
         case TOOL_SELECT: {
-            auto it = getBoxAt(start_pt.x, start_pt.y);
-            if (it != app->layout.end()) {
-                app->selectBox(&*it);
+            layout_box *box = getBoxAt(start_pt.x, start_pt.y);
+            if (box) {
+                app->selectBox(box);
                 dragging_offset.x = selected_box->x - start_pt.x;
                 dragging_offset.y = selected_box->y - start_pt.y;
                 mouseIsDown = true;
@@ -143,30 +147,29 @@ void box_editor_panel::OnMouseDown(wxMouseEvent &evt) {
             mouseIsDown = true;
             break;
         case TOOL_DELETEBOX: {
-            auto it = getBoxAt(start_pt.x, start_pt.y);
-            if (it != app->layout.end() && box_dialog::closeDialog(*it)) {
-                app->layout.erase(it);
+            auto *box = getBoxAt(start_pt.x, start_pt.y);
+            if (box && box_dialog::closeDialog(*box)) {
+                app->layout.erase(find_iterator(app->layout, box));
                 app->updateLayout();
                 Refresh();
             }
             break;
         }
         case TOOL_RESIZE: {
-            auto node = getBoxResizeNode(start_pt.x, start_pt.y);
-            if (!bool(node.directions)) {
-                app->selectBox(nullptr);
-            } else {
-                app->selectBox(&*node.box);
+            if (auto node = getBoxResizeNode(start_pt.x, start_pt.y)) {
+                app->selectBox(node.box);
                 node_directions = node.directions;
                 mouseIsDown = true;
+            } else {
+                app->selectBox(nullptr);
             }
             break;
         }
         case TOOL_MOVEPAGE: {
-            auto it = getBoxAt(start_pt.x, start_pt.y);
-            if (it != app->layout.end()) {
-                app->selectBox(&*it);
-                MovePageDialog(app, &*it).ShowModal();
+            layout_box *box = getBoxAt(start_pt.x, start_pt.y);
+            if (box) {
+                app->selectBox(box);
+                MovePageDialog(app, box).ShowModal();
             } else {
                 app->selectBox(nullptr);
             }
@@ -192,7 +195,7 @@ void box_editor_panel::OnMouseUp(wxMouseEvent &evt) {
                 }
                 break;
             case TOOL_NEWBOX: {
-                auto &box = *app->layout.insert_after(app->layout.get_box_iterator(selected_box));
+                auto &box = *app->layout.emplace(selected_box ? find_iterator(app->layout, selected_box) : app->layout.end());
                 box.x = std::min(start_pt.x, end_pt.x);
                 box.y = std::min(start_pt.y, end_pt.y);
                 box.w = std::abs(start_pt.x - end_pt.x);
@@ -293,10 +296,8 @@ void box_editor_panel::OnMouseMove(wxMouseEvent &evt) {
             OnMouseUp(evt);
         }
     } else {
-        switch (selected_tool) {
-        case TOOL_RESIZE:
-            auto node = getBoxResizeNode(end_pt.x, end_pt.y);
-            switch (node.directions) {
+        if (selected_tool == TOOL_RESIZE) {
+            switch (getBoxResizeNode(end_pt.x, end_pt.y).directions) {
             case direction::LEFT:
             case direction::RIGHT:
                 SetCursor(wxStockCursor::wxCURSOR_SIZEWE);
