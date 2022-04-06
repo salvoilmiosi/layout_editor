@@ -19,7 +19,7 @@ src/page_ctl.cpp
 resources/resources.rc
 )
 
-find_package(wxWidgets REQUIRED COMPONENTS base core stc)
+find_package(wxWidgets 3.1 REQUIRED COMPONENTS base core stc)
 include(${wxWidgets_USE_FILE})
 
 if(CMAKE_BUILD_TYPE STREQUAL "Release" AND WIN32)
