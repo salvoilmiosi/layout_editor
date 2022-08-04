@@ -22,7 +22,7 @@ private:
 
     wxChoice *m_language_box;
 
-    std::string m_language_ids[256];
+    std::list<std::string> m_language_ids;
 
     DECLARE_EVENT_TABLE()
 };

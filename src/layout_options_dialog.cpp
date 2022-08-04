@@ -23,18 +23,17 @@ LayoutOptionsDialog::LayoutOptionsDialog(wxWindow *parent, layout_box_list *layo
 
     m_language_box = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
 
-    auto *language_id_ptr = m_language_ids;
     m_language_box->Append(wxintl::translate("SYSTEM_LANGUAGE"));
     size_t selection = 0;
     for (int lang = 2; lang != wxLANGUAGE_USER_DEFINED; ++lang) {
         if (!wxLocale::IsAvailable(lang)) continue;
         auto lang_str = wxLocale::GetLanguageCanonicalName(lang).ToStdString();
         if (lang_str.empty()) continue;
-        *language_id_ptr = lang_str;
+        auto *language_id_ptr = &m_language_ids.emplace_back(lang_str);
         if (lang_str == layout->language) {
-            selection = language_id_ptr - m_language_ids + 1;
+            selection = m_language_ids.size();
         }
-        m_language_box->Append(wxLocale::GetLanguageName(lang), language_id_ptr++);
+        m_language_box->Append(wxLocale::GetLanguageName(lang), language_id_ptr);
     }
     m_language_box->SetSelection(selection);
 
